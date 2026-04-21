@@ -1,13 +1,14 @@
 {
   "name": "e-commerce-app-express-postegresql",
   "version": "1.0.0",
-  "description": "",
+  "description": "Building an E-Commerce app as a backend with nodejs, expressjs, postgresql and prisma",
   "license": "ISC",
   "author": "Ahmed Monem",
   "type": "module",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.ts",
+    "start:prod": "SET NODE_ENV=production & nodemon server.ts"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
@@ -19,7 +20,19 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "pg": "^8.20.0"
+    "express": "^5.2.1",
+    "firebase-admin": "^13.8.0",
+    "html-to-text": "^9.0.5",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.5",
+    "pg": "^8.20.0",
+    "pug": "^3.0.4",
+    "stripe": "^22.0.2",
+    "validator": "^13.15.35"
   }
 }
