@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client/extension";
+import { prisma } from "../prisma/client";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-const prisma = new PrismaClient();
 // CREATE USER (replaces pre-save hashing)
 export const createUser = async (data: {
   name: string;
