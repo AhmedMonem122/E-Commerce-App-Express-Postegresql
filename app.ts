@@ -6,7 +6,7 @@ import morgan from "morgan";
 // const wishlistRouter = require("./routes/wishlistRoutes");
 // const cartRouter = require("./routes/cartRoutes");
 // const reviewRouter = require("./routes/reviewRoutes");
-// const userRouter = require("./routes/userRoutes");
+import userRouter from "./routes/userRoutes";
 // const paymentRouter = require("./routes/paymentRoutes");
 // const AppError = require("./utils/appError");
 // const globalErrorHandler = require("./controllers/errorController");
@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === "development") {
 // app.use("/api/v1/wishlist", wishlistRouter);
 // app.use("/api/v1/cart", cartRouter);
 // app.use("/api/v1/reviews", reviewRouter);
-// app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", userRouter);
 // app.use("/api/v1/payment", paymentRouter);
 
 // app.all("*", (req, res, next) => {
