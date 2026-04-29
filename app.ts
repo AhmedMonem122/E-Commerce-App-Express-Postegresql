@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 // const productRouter = require("./routes/productRoutes");
 // const categoryRouter = require("./routes/categoryRoutes");
@@ -8,8 +8,8 @@ import morgan from "morgan";
 // const reviewRouter = require("./routes/reviewRoutes");
 import userRouter from "./routes/userRoutes";
 // const paymentRouter = require("./routes/paymentRoutes");
-// const AppError = require("./utils/appError");
-// const globalErrorHandler = require("./controllers/errorController");
+import AppError from "./utils/appError";
+import globalErrorHandler from "./controllers/errorController";
 import bodyParser from "body-parser";
 import cors from "cors";
 // const paymentController = require("./controllers/paymentController");
@@ -39,10 +39,10 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/v1/users", userRouter);
 // app.use("/api/v1/payment", paymentRouter);
 
-// app.all("*", (req, res, next) => {
-//   next(new AppError(`Cant't find ${req.originalUrl} on this server!`, 404));
-// });
+app.use((req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 export default app;
