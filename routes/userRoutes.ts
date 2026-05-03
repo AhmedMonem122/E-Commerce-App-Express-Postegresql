@@ -8,7 +8,18 @@ import {
   protect,
   restrictTo,
 } from "../controllers/authController";
-// import userController from "../controllers/userController";
+import {
+  getMe,
+  getUser,
+  uploadUserPhoto,
+  uploadUserPhotoToFirebase,
+  updateMe,
+  deleteMe,
+  getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../controllers/userController";
 
 const router = express.Router();
 
@@ -21,26 +32,14 @@ router.put("/resetPassword/:token", resetPassword);
 router.use(protect);
 
 router.put("/updateMyPassword", updatePassword);
-// router.get("/me", userController.getMe, userController.getUser);
-// router.patch(
-//   "/updateMe",
-//   userController.uploadUserPhoto,
-//   userController.uploadUserPhotoToFirebase,
-//   userController.updateMe
-// );
-// router.delete("/deleteMe", userController.deleteMe);
+router.get("/me", getMe, getUser);
+router.patch("/updateMe", uploadUserPhoto, uploadUserPhotoToFirebase, updateMe);
+router.delete("/deleteMe", deleteMe);
 
 router.use(restrictTo("admin"));
 
-// router
-//   .route("/")
-//   .get(userController.getAllUsers)
-//   .post(userController.createUser);
+router.route("/").get(getAllUsers).post(createUser);
 
-// router
-//   .route("/:id")
-//   .get(userController.getUser)
-//   .patch(userController.updateUser)
-//   .delete(userController.deleteUser);
+router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 
 export default router;
