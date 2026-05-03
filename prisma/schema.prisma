@@ -9,22 +9,101 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id                    String   @id @default(uuid())
-  name                  String
-  email                 String   @unique
-  photo                 String?
-  role                  Role     @default(USER)
-  password              String
-  passwordChangedAt     DateTime?
-  passwordResetToken    String?
-  passwordResetExpires  DateTime?
-  active                Boolean  @default(true)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                   String    @id @default(uuid())
+  name                 String
+  email                String    @unique
+  photo                String?
+  role                 Role      @default(USER)
+  password             String
+  passwordChangedAt    DateTime?
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+  active               Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  reviews Review[]
+}
+
+model Product {
+  id String @id @default(cuid())
+
+  title      String
+  imageCover String?
+  images     String[]
+
+  description String
+
+  ratingsAverage  Float @default(4.5)
+  ratingsQuantity Int   @default(0)
+
+  price Float
+
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id])
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  reviews Review[] // virtual in mongoose → real relation in prisma
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id String @id @default(cuid())
+
+  title       String
+  description String
+  image       String
+
+  brands   Brand[] // auto relation
+  products Product[] // auto relation
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id String @id @default(cuid())
+
+  title       String
+  description String
+  image       String
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  products Product[] // auto relation (NO manual storing)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id String @id @default(cuid())
+
+  review String
+  rating Float?
+
+  reactions Reaction?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
 }
 
 enum Role {
@@ -32,3 +111,8 @@ enum Role {
   ADMIN
 }
 
+enum Reaction {
+  Like
+  Dislike
+  Love
+}
