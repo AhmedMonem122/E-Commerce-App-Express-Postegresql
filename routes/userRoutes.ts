@@ -36,7 +36,7 @@ router.get("/me", getMe, getUser);
 router.patch("/updateMe", uploadUserPhoto, uploadUserPhotoToFirebase, updateMe);
 router.delete("/deleteMe", deleteMe);
 
-router.use(restrictTo("admin"));
+router.use(restrictTo("ADMIN"));
 
 router.route("/").get(getAllUsers).post(createUser);
 
