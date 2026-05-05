@@ -1,6 +1,6 @@
 import express, { type NextFunction, Request, Response } from "express";
 import morgan from "morgan";
-// const productRouter = require("./routes/productRoutes");
+import productRouter from "./routes/productRoutes";
 // const categoryRouter = require("./routes/categoryRoutes");
 // const brandRouter = require("./routes/brandRoutes");
 // const wishlistRouter = require("./routes/wishlistRoutes");
@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// app.use("/api/v1/products", productRouter);
+app.use("/api/v1/products", productRouter);
 // app.use("/api/v1/categories", categoryRouter);
 // app.use("/api/v1/brands", brandRouter);
 // app.use("/api/v1/wishlist", wishlistRouter);
