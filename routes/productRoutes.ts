@@ -26,7 +26,7 @@ router
   .get(getAllProducts)
   .post(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     uploadProductImages,
     uploadProductImagesToFirebase,
     addProduct,
@@ -37,11 +37,11 @@ router
   .get(getSpecificProduct)
   .patch(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     uploadProductImages,
     uploadProductImagesToFirebase,
     updateProduct,
   )
-  .delete(protect, restrictTo("admin"), deleteProduct);
+  .delete(protect, restrictTo("ADMIN"), deleteProduct);
 
 export default router;
