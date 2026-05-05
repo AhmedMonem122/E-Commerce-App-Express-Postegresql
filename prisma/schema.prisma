@@ -27,6 +27,7 @@ model User {
   updatedAt            DateTime  @updatedAt
 
   reviews Review[]
+  payments  Payment[]
 }
 
 model Product {
@@ -51,8 +52,32 @@ model Product {
 
   reviews Review[] // virtual in mongoose → real relation in prisma
 
+  cartItems        CartItem[]
+  paymentItems PaymentItem[]
+  wishlistItems WishlistItem[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Wishlist {
+  id         String          @id @default(uuid())
+
+  createdBy  String
+
+  items      WishlistItem[]  // 👈 replaces products[]
+
+  createdAt  DateTime        @default(now())
+}
+
+model WishlistItem {
+  id          String   @id @default(uuid())
+
+  wishlistId  String
+  wishlist    Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
 }
 
 model Category {
@@ -104,6 +129,65 @@ model Review {
 
   @@index([productId])
   @@index([userId])
+}
+
+model Cart {
+  id              String     @id @default(uuid())
+  cartOwner       String
+  totalCartPrice  Float      @default(0)
+
+  items           CartItem[] 
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+
+  count     Int
+  price     Float
+
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id               String        @id @default(uuid())
+
+  userId           String
+  user             User          @relation(fields: [userId], references: [id])
+
+  price            Float
+  amount           Int
+  paid             Boolean       @default(true)
+
+  shippingDetails  String?
+  shippingPhone    String?
+  shippingCity     String?
+
+  items            PaymentItem[]   // 👈 replaces products[]
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model PaymentItem {
+  id         String   @id @default(uuid())
+
+  count      Int
+  price      Float
+
+  paymentId  String
+  payment    Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
 }
 
 enum Role {
