@@ -26,8 +26,8 @@ model User {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
-  reviews Review[]
-  payments  Payment[]
+  reviews  Review[]
+  payments Payment[]
 }
 
 model Product {
@@ -50,10 +50,10 @@ model Product {
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])
 
-  reviews Review[] // virtual in mongoose → real relation in prisma
+  reviews Review[]
 
-  cartItems        CartItem[]
-  paymentItems PaymentItem[]
+  cartItems     CartItem[]
+  paymentItems  PaymentItem[]
   wishlistItems WishlistItem[]
 
   createdAt DateTime @default(now())
@@ -61,23 +61,23 @@ model Product {
 }
 
 model Wishlist {
-  id         String          @id @default(uuid())
+  id String @id @default(uuid())
 
-  createdBy  String
+  createdBy String
 
-  items      WishlistItem[]  // 👈 replaces products[]
+  items WishlistItem[]
 
-  createdAt  DateTime        @default(now())
+  createdAt DateTime @default(now())
 }
 
 model WishlistItem {
-  id          String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  wishlistId  String
-  wishlist    Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  wishlistId String
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
 
-  productId   String
-  product     Product  @relation(fields: [productId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Category {
@@ -132,62 +132,62 @@ model Review {
 }
 
 model Cart {
-  id              String     @id @default(uuid())
-  cartOwner       String
-  totalCartPrice  Float      @default(0)
+  id             String @id @default(uuid())
+  cartOwner      String
+  totalCartPrice Float  @default(0)
 
-  items           CartItem[] 
+  items CartItem[]
 
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CartItem {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  count     Int
-  price     Float
+  count Int
+  price Float
 
-  cartId    String
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId String
+  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
 
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 
   createdAt DateTime @default(now())
 }
 
 model Payment {
-  id               String        @id @default(uuid())
+  id String @id @default(uuid())
 
-  userId           String
-  user             User          @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  price            Float
-  amount           Int
-  paid             Boolean       @default(true)
+  price  Float
+  amount Int
+  paid   Boolean @default(true)
 
-  shippingDetails  String?
-  shippingPhone    String?
-  shippingCity     String?
+  shippingDetails String?
+  shippingPhone   String?
+  shippingCity    String?
 
-  items            PaymentItem[]   // 👈 replaces products[]
+  items PaymentItem[] // 👈 replaces products[]
 
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PaymentItem {
-  id         String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  count      Int
-  price      Float
+  count Int
+  price Float
 
-  paymentId  String
-  payment    Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  paymentId String
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 enum Role {
