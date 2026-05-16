@@ -11,11 +11,11 @@ import {
   uploadProductImagesToFirebase,
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
-// import reviewRouter from "./reviewRoutes.js";
+import reviewRouter from "./reviewRoutes.js";
 
 const router = express.Router({ mergeParams: true });
 
-// router.use("/:productId/reviews", reviewRouter);
+router.use("/:productId/reviews", reviewRouter);
 
 router.route("/top-5-cheap").get(aliasTopProducts, getAllProducts);
 
