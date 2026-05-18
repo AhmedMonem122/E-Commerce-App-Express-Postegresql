@@ -6,7 +6,7 @@ import {
   updateCategory,
   deleteCategory,
   uploadCategoryImage,
-  uploadCategoryImageToFirebase,
+  uploadCategoryImageToSupabase,
 } from "../controllers/categoryController";
 import { protect, restrictTo } from "../controllers/authController";
 import { filterByCategories } from "../controllers/productController";
@@ -23,7 +23,7 @@ router
     protect,
     restrictTo("admin"),
     uploadCategoryImage,
-    uploadCategoryImageToFirebase,
+    uploadCategoryImageToSupabase,
     addCategory,
   );
 
@@ -34,7 +34,7 @@ router
     protect,
     restrictTo("admin"),
     uploadCategoryImage,
-    uploadCategoryImageToFirebase,
+    uploadCategoryImageToSupabase,
     updateCategory,
   )
   .delete(protect, restrictTo("admin"), deleteCategory);
