@@ -31,8 +31,8 @@ const handleJWTError = () =>
 const handleJWTExpiredError = () =>
   new AppError("Your token has expired! Please log in again.", 401);
 
-const sendErrorDev = (err: any, res: Response) => {
-  res.status(err.statusCode).json({
+const sendErrorDev = (err: AppError, res: Response) => {
+  res.status(Number(err.statusCode) || 500).json({
     status: err.status,
     message: err.message,
     error: err,
@@ -40,45 +40,58 @@ const sendErrorDev = (err: any, res: Response) => {
   });
 };
 
-const sendErrorProd = (err: any, res: Response) => {
+const sendErrorProd = (err: AppError, res: Response) => {
   if (err.isOperational) {
-    res.status(err.statusCode).json({
+    res.status(Number(err.statusCode) || 500).json({
       status: err.status,
       message: err.message,
     });
   } else {
-    console.error("ERROR 💥", err);
-
     res.status(500).json({
       status: "error",
-      message: "Something went very wrong!",
+      message: "Something went wrong!",
     });
   }
 };
 
+// ==============================
+// GLOBAL ERROR HANDLER
+// ==============================
 export default (err: any, req: Request, res: Response, next: NextFunction) => {
-  err.statusCode = err.statusCode || 500;
+  err.statusCode = Number(err.statusCode) || 500;
+
   err.status = err.status || "error";
 
+  // ==============================
+  // DEVELOPMENT
+  // ==============================
   if (process.env.NODE_ENV === "development") {
     return sendErrorDev(err, res);
   }
 
-  // Clone error safely
-  let error = { ...err };
+  // ==============================
+  // PRODUCTION
+  // ==============================
+  let error = err;
 
-  // ✅ Prisma errors
+  // Prisma known errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     error = handlePrismaKnownError(err);
   }
 
+  // Prisma validation
   if (err instanceof Prisma.PrismaClientValidationError) {
     error = handlePrismaValidationError();
   }
 
-  // ✅ JWT errors
-  if (err.name === "JsonWebTokenError") error = handleJWTError();
-  if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
+  // JWT
+  if (err.name === "JsonWebTokenError") {
+    error = handleJWTError();
+  }
+
+  if (err.name === "TokenExpiredError") {
+    error = handleJWTExpiredError();
+  }
 
   sendErrorProd(error, res);
 };
