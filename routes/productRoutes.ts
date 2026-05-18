@@ -8,7 +8,7 @@ import {
   aliasTopProducts,
   getProductStats,
   uploadProductImages,
-  uploadProductImagesToFirebase,
+  uploadProductImagesToSupabase,
 } from "../controllers/productController";
 import { protect, restrictTo } from "../controllers/authController";
 import reviewRouter from "./reviewRoutes.js";
@@ -28,7 +28,7 @@ router
     protect,
     restrictTo("ADMIN"),
     uploadProductImages,
-    uploadProductImagesToFirebase,
+    uploadProductImagesToSupabase,
     addProduct,
   );
 
@@ -39,7 +39,7 @@ router
     protect,
     restrictTo("ADMIN"),
     uploadProductImages,
-    uploadProductImagesToFirebase,
+    uploadProductImagesToSupabase,
     updateProduct,
   )
   .delete(protect, restrictTo("ADMIN"), deleteProduct);
