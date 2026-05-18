@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import { prisma } from "../prisma/client";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { APIFeatures } from "../utils/apiFeatures";
+import { supabase } from "../config/supabase";
 
 export const getAll = (model: any, modelName: string) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -130,7 +130,7 @@ export const deleteOne = (model: any, modelName: string) =>
     });
   });
 
-export const uploadImageToFirebase = (fileDest: string, storage: any) =>
+export const uploadImageToSupabase = (fileDest: string, bucket: string) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     if (!req.file) return next();
 
@@ -140,21 +140,100 @@ export const uploadImageToFirebase = (fileDest: string, storage: any) =>
 
     const filename = `${fileDest}/${safeName}-${
       req.params[`${safeName}Id`] || ""
-    }-${file.originalname}-${Date.now()}`;
+    }-${Date.now()}-${file.originalname}`;
 
-    const fileRef = storage.file(filename);
-
-    await fileRef.save(file.buffer, {
-      metadata: {
+    // upload to supabase storage
+    const { error } = await supabase.storage
+      .from(bucket)
+      .upload(filename, file.buffer, {
         contentType: file.mimetype,
-      },
-    });
+        upsert: false,
+      });
 
-    const downloadURL = `https://firebasestorage.googleapis.com/v0/b/${
-      process.env.FIREBASE_STORAGE_BUCKET
-    }/o/${encodeURIComponent(filename)}?alt=media`;
+    if (error) {
+      return next(error);
+    }
 
-    req.body.image = downloadURL;
+    // get public url
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(filename);
+
+    req.body.image = publicUrl;
+
+    next();
+  });
+
+export const uploadProductImagesToSupabaseFactory = (bucket: string) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const files = req.files as {
+      imageCover?: Express.Multer.File[];
+      images?: Express.Multer.File[];
+    };
+
+    if (!files?.imageCover && !files?.images) {
+      return next();
+    }
+
+    // ==============================
+    // IMAGE COVER
+    // ==============================
+    if (files.imageCover?.length) {
+      const cover = files.imageCover[0];
+
+      const coverName = `Products/product-${
+        req.params.id || ""
+      }-cover-${Date.now()}-${cover.originalname}`;
+
+      const { error: coverError } = await supabase.storage
+        .from(bucket)
+        .upload(coverName, cover.buffer, {
+          contentType: cover.mimetype,
+          upsert: false,
+        });
+
+      if (coverError) {
+        return next(coverError);
+      }
+
+      const {
+        data: { publicUrl: coverURL },
+      } = supabase.storage.from(bucket).getPublicUrl(coverName);
+
+      req.body.imageCover = coverURL;
+    }
+
+    // ==============================
+    // PRODUCT IMAGES
+    // ==============================
+    if (files.images?.length) {
+      const imagesURLs = await Promise.all(
+        files.images.map(async (file, i) => {
+          const imageName = `Products/product-${
+            req.params.id || ""
+          }-${Date.now()}-${i}-${file.originalname}`;
+
+          const { error } = await supabase.storage
+            .from(bucket)
+            .upload(imageName, file.buffer, {
+              contentType: file.mimetype,
+              upsert: false,
+            });
+
+          if (error) {
+            throw error;
+          }
+
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from(bucket).getPublicUrl(imageName);
+
+          return publicUrl;
+        }),
+      );
+
+      req.body.images = imagesURLs;
+    }
 
     next();
   });
