@@ -12,7 +12,7 @@ import {
   addOne,
   updateOne,
   deleteOne,
-  uploadImageToFirebase,
+  uploadImageToSupabase,
 } from "./handlerFactory";
 
 // ==============================
@@ -43,9 +43,9 @@ const upload = multer({
 // ==============================
 export const uploadCategoryImage = upload.single("image");
 
-export const uploadCategoryImageToFirebase = uploadImageToFirebase(
+export const uploadCategoryImageToSupabase = uploadImageToSupabase(
   "Categories",
-  storage,
+  "ecommerce",
 );
 
 // ==============================
