@@ -6,7 +6,7 @@ import {
   updateBrand,
   deleteBrand,
   uploadBrandImage,
-  uploadBrandImageToFirebase,
+  uploadBrandImageToSupabase,
 } from "../controllers/brandController";
 import { protect, restrictTo } from "../controllers/authController";
 import { filterByBrands } from "../controllers/productController";
@@ -23,7 +23,7 @@ router
     protect,
     restrictTo("admin"),
     uploadBrandImage,
-    uploadBrandImageToFirebase,
+    uploadBrandImageToSupabase,
     addBrand,
   );
 
@@ -34,7 +34,7 @@ router
     protect,
     restrictTo("admin"),
     uploadBrandImage,
-    uploadBrandImageToFirebase,
+    uploadBrandImageToSupabase,
     updateBrand,
   )
   .delete(protect, restrictTo("admin"), deleteBrand);
