@@ -21,7 +21,7 @@ router
   .get(getAllCategories)
   .post(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     uploadCategoryImage,
     uploadCategoryImageToSupabase,
     addCategory,
@@ -32,11 +32,11 @@ router
   .get(getSpecificCategory)
   .patch(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     uploadCategoryImage,
     uploadCategoryImageToSupabase,
     updateCategory,
   )
-  .delete(protect, restrictTo("admin"), deleteCategory);
+  .delete(protect, restrictTo("ADMIN"), deleteCategory);
 
 export default router;
