@@ -18,7 +18,7 @@ router.post("/checkout-session", createCheckoutSession);
 
 router.get("/myPayments", getUserPayments);
 
-router.use(restrictTo("admin"));
+router.use(restrictTo("ADMIN"));
 
 router.route("/").get(getAllPayments).post(addPayment);
 
