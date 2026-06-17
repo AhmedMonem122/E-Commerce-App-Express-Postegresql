@@ -21,7 +21,7 @@ router
   .get(getAllBrands)
   .post(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     uploadBrandImage,
     uploadBrandImageToSupabase,
     addBrand,
@@ -32,11 +32,11 @@ router
   .get(getSpecificBrand)
   .patch(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     uploadBrandImage,
     uploadBrandImageToSupabase,
     updateBrand,
   )
-  .delete(protect, restrictTo("admin"), deleteBrand);
+  .delete(protect, restrictTo("ADMIN"), deleteBrand);
 
 export default router;
