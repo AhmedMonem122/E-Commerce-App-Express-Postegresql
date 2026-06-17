@@ -1,18 +1,18 @@
 import express, { type NextFunction, Request, Response } from "express";
 import morgan from "morgan";
-import productRouter from "./routes/productRoutes";
-import categoryRouter from "./routes/categoryRoutes";
-import brandRouter from "./routes/brandRoutes";
-import wishlistRouter from "./routes/wishlistRoutes";
-import cartRouter from "./routes/cartRoutes";
-import reviewRouter from "./routes/reviewRoutes";
-import userRouter from "./routes/userRoutes";
-import paymentRouter from "./routes/paymentRoutes";
-import AppError from "./utils/appError";
-import globalErrorHandler from "./controllers/errorController";
+import productRouter from "./routes/productRoutes.js";
+import categoryRouter from "./routes/categoryRoutes.js";
+import brandRouter from "./routes/brandRoutes.js";
+import wishlistRouter from "./routes/wishlistRoutes.js";
+import cartRouter from "./routes/cartRoutes.js";
+import reviewRouter from "./routes/reviewRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import paymentRouter from "./routes/paymentRoutes.js";
+import AppError from "./utils/appError.js";
+import globalErrorHandler from "./controllers/errorController.js";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { webhookCheckout } from "./controllers/paymentController";
+import { webhookCheckout } from "./controllers/paymentController.js";
 
 const app = express();
 

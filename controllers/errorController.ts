@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { Prisma } from "@prisma/client";
-import AppError from "../utils/appError";
+import AppError from "../utils/appError.js";
 
 const handlePrismaKnownError = (err: Prisma.PrismaClientKnownRequestError) => {
   // Unique constraint failed

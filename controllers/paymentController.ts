@@ -1,12 +1,18 @@
 import type { Request, Response, NextFunction } from "express";
 import Stripe from "stripe";
 
-import { prisma } from "../prisma/client";
+import { prisma } from "../prisma/client.js";
 
-import catchAsync from "../utils/catchAsync";
-import AppError from "../utils/appError";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
 
-import { getAll, getOne, addOne, updateOne, deleteOne } from "./handlerFactory";
+import {
+  getAll,
+  getOne,
+  addOne,
+  updateOne,
+  deleteOne,
+} from "./handlerFactory.js";
 
 // ==============================
 // STRIPE

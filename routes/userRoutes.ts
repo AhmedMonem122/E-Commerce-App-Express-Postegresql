@@ -7,7 +7,7 @@ import {
   updatePassword,
   protect,
   restrictTo,
-} from "../controllers/authController";
+} from "../controllers/authController.js";
 import {
   getMe,
   getUser,
@@ -19,7 +19,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
-} from "../controllers/userController";
+} from "../controllers/userController.js";
 
 const router = express.Router();
 

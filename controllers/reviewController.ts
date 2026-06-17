@@ -1,13 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 
-import { prisma } from "../prisma/client";
+import { prisma } from "../prisma/client.js";
 
-import { getAll, getOne, updateOne } from "./handlerFactory";
+import { getAll, getOne, updateOne } from "./handlerFactory.js";
 
-import AppError from "../utils/appError";
-import catchAsync from "../utils/catchAsync";
+import AppError from "../utils/appError.js";
+import catchAsync from "../utils/catchAsync.js";
 
-import { calcAverageRatings } from "../services/reviewService";
+import { calcAverageRatings } from "../services/reviewService.js";
 
 // ==============================
 // SET PRODUCT + USER IDS

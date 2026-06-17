@@ -7,10 +7,10 @@ import {
   deleteCategory,
   uploadCategoryImage,
   uploadCategoryImageToSupabase,
-} from "../controllers/categoryController";
-import { protect, restrictTo } from "../controllers/authController";
-import { filterByCategories } from "../controllers/productController";
-import productRouter from "./productRoutes";
+} from "../controllers/categoryController.js";
+import { protect, restrictTo } from "../controllers/authController.js";
+import { filterByCategories } from "../controllers/productController.js";
+import productRouter from "./productRoutes.js";
 
 const router = express.Router({ mergeParams: true });
 

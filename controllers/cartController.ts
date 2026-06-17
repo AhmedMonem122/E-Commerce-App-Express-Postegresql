@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 
-import { prisma } from "../prisma/client";
+import { prisma } from "../prisma/client.js";
 
-import catchAsync from "../utils/catchAsync";
-import AppError from "../utils/appError";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
 
 // =====================================
 // HELPERS

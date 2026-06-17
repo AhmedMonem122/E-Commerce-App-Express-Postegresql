@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
 import multer from "multer";
-import AppError from "../utils/appError";
-import catchAsync from "../utils/catchAsync";
-import * as factory from "./handlerFactory";
-import admin from "../config/firebase";
-import { prisma } from "../prisma/client";
+import AppError from "../utils/appError.js";
+import catchAsync from "../utils/catchAsync.js";
+import * as factory from "./handlerFactory.js";
+import admin from "../config/firebase.js";
+import { prisma } from "../prisma/client.js";
 
 const storage = admin.storage().bucket();
 

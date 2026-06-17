@@ -3,12 +3,15 @@ import jwt, { type JwtPayload, type SignOptions } from "jsonwebtoken";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
-import AppError from "../utils/appError";
-import catchAsync from "../utils/catchAsync";
-import Email from "../utils/email";
+import AppError from "../utils/appError.js";
+import catchAsync from "../utils/catchAsync.js";
+import Email from "../utils/email.js";
 
-import { prisma } from "../prisma/client";
-import { changedPasswordAfter, correctPassword } from "../services/userService";
+import { prisma } from "../prisma/client.js";
+import {
+  changedPasswordAfter,
+  correctPassword,
+} from "../services/userService.js";
 
 interface DecodedToken extends JwtPayload {
   id: string;

@@ -9,8 +9,8 @@ import {
   getProductStats,
   uploadProductImages,
   uploadProductImagesToSupabase,
-} from "../controllers/productController";
-import { protect, restrictTo } from "../controllers/authController";
+} from "../controllers/productController.js";
+import { protect, restrictTo } from "../controllers/authController.js";
 import reviewRouter from "./reviewRoutes.js";
 
 const router = express.Router({ mergeParams: true });

@@ -7,10 +7,10 @@ import {
   deleteBrand,
   uploadBrandImage,
   uploadBrandImageToSupabase,
-} from "../controllers/brandController";
-import { protect, restrictTo } from "../controllers/authController";
-import { filterByBrands } from "../controllers/productController";
-import productRouter from "./productRoutes";
+} from "../controllers/brandController.js";
+import { protect, restrictTo } from "../controllers/authController.js";
+import { filterByBrands } from "../controllers/productController.js";
+import productRouter from "./productRoutes.js";
 
 const router = express.Router({ mergeParams: true });
 

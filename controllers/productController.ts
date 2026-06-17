@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import multer from "multer";
-import { prisma } from "../prisma/client";
-import catchAsync from "../utils/catchAsync";
-import AppError from "../utils/appError";
-import admin from "../config/firebase";
+import { prisma } from "../prisma/client.js";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
+import admin from "../config/firebase.js";
 
 // ✅ IMPORT FACTORY (PRISMA VERSION)
 import {
@@ -13,7 +13,7 @@ import {
   updateOne,
   deleteOne,
   uploadProductImagesToSupabaseFactory,
-} from "./handlerFactory";
+} from "./handlerFactory.js";
 
 // ==============================
 // FIREBASE

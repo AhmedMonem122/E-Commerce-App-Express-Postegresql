@@ -1,4 +1,4 @@
-import { prisma } from "../prisma/client";
+import { prisma } from "../prisma/client.js";
 
 export const calcAverageRatings = async (productId: string) => {
   const stats = await prisma.review.aggregate({

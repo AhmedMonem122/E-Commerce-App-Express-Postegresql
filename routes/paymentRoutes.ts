@@ -7,8 +7,8 @@ import {
   getSpecificPayment,
   updatePayment,
   deletePayment,
-} from "../controllers/paymentController";
-import { protect, restrictTo } from "../controllers/authController";
+} from "../controllers/paymentController.js";
+import { protect, restrictTo } from "../controllers/authController.js";
 
 const router = express.Router();
 

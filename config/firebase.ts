@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import firebaseAdminConfig from "./firebaseConfig";
+import firebaseAdminConfig from "./firebaseConfig.js";
 
 // Check if the default app is already initialized
 if (!admin.apps.length) {

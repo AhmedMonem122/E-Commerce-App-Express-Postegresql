@@ -1,12 +1,12 @@
 import express from "express";
-import { protect, restrictTo } from "../controllers/authController";
+import { protect, restrictTo } from "../controllers/authController.js";
 import {
   getLoggedUserCart,
   addProductToCart,
   clearUserCart,
   updateProductCartQuantity,
   removeSpecificCartItem,
-} from "../controllers/cartController";
+} from "../controllers/cartController.js";
 
 const router = express.Router();
 

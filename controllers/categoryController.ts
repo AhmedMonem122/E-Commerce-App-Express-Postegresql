@@ -1,9 +1,9 @@
 import multer from "multer";
-import admin from "../config/firebase";
-import AppError from "../utils/appError";
+import admin from "../config/firebase.js";
+import AppError from "../utils/appError.js";
 
 // ✅ Prisma Client
-import { prisma } from "../prisma/client";
+import { prisma } from "../prisma/client.js";
 
 // ✅ Prisma Handler Factory
 import {
@@ -13,7 +13,7 @@ import {
   updateOne,
   deleteOne,
   uploadImageToSupabase,
-} from "./handlerFactory";
+} from "./handlerFactory.js";
 
 // ==============================
 // FIREBASE STORAGE

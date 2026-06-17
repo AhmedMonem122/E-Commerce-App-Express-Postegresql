@@ -3,8 +3,8 @@ import {
   getLoggedUserWishlist,
   addProductToWishlist,
   removeProductFromWishlist,
-} from "../controllers/wishlistController";
-import { protect, restrictTo } from "../controllers/authController";
+} from "../controllers/wishlistController.js";
+import { protect, restrictTo } from "../controllers/authController.js";
 
 const router = express.Router();
 

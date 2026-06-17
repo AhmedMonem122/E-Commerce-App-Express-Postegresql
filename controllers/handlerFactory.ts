@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import catchAsync from "../utils/catchAsync";
-import AppError from "../utils/appError";
-import { APIFeatures } from "../utils/apiFeatures";
-import { supabase } from "../config/supabase";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
+import { APIFeatures } from "../utils/apiFeatures.js";
+import { supabase } from "../config/supabase.js";
 
 export const getAll = (model: any, modelName: string) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
