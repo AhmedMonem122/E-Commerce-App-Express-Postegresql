@@ -13,6 +13,9 @@ import globalErrorHandler from "./controllers/errorController.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { webhookCheckout } from "./controllers/paymentController.js";
+import fs from "fs";
+import path from "path";
+import swaggerUi from "swagger-ui-express";
 
 const app = express();
 
@@ -38,6 +41,22 @@ app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/payment", paymentRouter);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  (req: Request, res: Response, next: NextFunction) => {
+    const swaggerSpecPath = path.resolve("./swagger-output.json");
+    if (fs.existsSync(swaggerSpecPath)) {
+      const swaggerSpec = JSON.parse(fs.readFileSync(swaggerSpecPath, "utf8"));
+      swaggerUi.setup(swaggerSpec)(req, res, next);
+    } else {
+      res
+        .status(404)
+        .send("Swagger file is generating, please refresh in a moment.");
+    }
+  },
+);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
