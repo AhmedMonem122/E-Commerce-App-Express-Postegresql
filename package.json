@@ -7,8 +7,8 @@
   "type": "module",
   "main": "server.ts",
   "scripts": {
-    "start": "nodemon --exec tsx server.ts",
-    "start:prod": "SET NODE_ENV=production & nodemon --exec tsx server.ts"
+    "start": "tsx swagger.ts && nodemon --exec tsx server.ts",
+    "start:prod": "cross-env NODE_ENV=production tsx swagger.ts && nodemon --exec tsx server.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -20,6 +20,8 @@
     "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",
     "@types/pug": "^2.0.10",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "prisma": "^6.19.3",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
@@ -31,6 +33,7 @@
     "@supabase/supabase-js": "^2.105.4",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "firebase-admin": "^13.8.0",
@@ -42,6 +45,9 @@
     "pg": "^8.20.0",
     "pug": "^3.0.4",
     "stripe": "^22.0.2",
+    "swagger-autogen": "^2.23.7",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
     "validator": "^13.15.35"
   }
 }
