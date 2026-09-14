@@ -42,8 +42,10 @@ app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/payment", paymentRouter);
 
-const CSS_URL = "https://cloudflare.com";
-const customCss = ".swagger-ui .topbar { display: none }";
+const SWAGGER_CDN_VERSION = "4.15.5";
+const CSS_URL = `https://cloudflare.com${SWAGGER_CDN_VERSION}/swagger-ui.min.css`;
+const BUNDLE_URL = `https://cloudflare.com${SWAGGER_CDN_VERSION}/swagger-ui-bundle.min.js`;
+const PRESET_URL = `https://cloudflare.com${SWAGGER_CDN_VERSION}/swagger-ui-standalone-preset.min.js`;
 
 app.use(
   "/api-docs",
@@ -56,7 +58,7 @@ app.use(
 
       swaggerUi.setup(swaggerSpec, {
         customCssUrl: CSS_URL,
-        customCss: customCss,
+        customJs: [BUNDLE_URL, PRESET_URL],
       })(req, res, next);
     } else {
       res
