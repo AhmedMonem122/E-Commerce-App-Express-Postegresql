@@ -1,24 +1,15 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
   "functions": {
-    "api/server.ts": {
-      "includeFiles": "{dist/openapi.yaml,node_modules/swagger-ui-dist/**}"
+    "api/server.js": {
+      "includeFiles": "swagger-output.json"
     }
   },
-  "builds": [
-    {
-      "src": "swagger.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "server.ts",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "server.ts",
+      "dest": "api/server.js",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     }
   ]
