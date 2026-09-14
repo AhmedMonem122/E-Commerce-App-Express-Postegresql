@@ -42,6 +42,9 @@ app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/payment", paymentRouter);
 
+const CSS_URL = "https://cloudflare.com";
+const customCss = ".swagger-ui .topbar { display: none }";
+
 app.use(
   "/api-docs",
   swaggerUi.serve,
@@ -50,7 +53,11 @@ app.use(
 
     if (fs.existsSync(swaggerSpecPath)) {
       const swaggerSpec = JSON.parse(fs.readFileSync(swaggerSpecPath, "utf8"));
-      swaggerUi.setup(swaggerSpec)(req, res, next);
+
+      swaggerUi.setup(swaggerSpec, {
+        customCssUrl: CSS_URL,
+        customCss: customCss,
+      })(req, res, next);
     } else {
       res
         .status(404)
