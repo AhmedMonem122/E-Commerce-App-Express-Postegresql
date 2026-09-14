@@ -10,8 +10,8 @@ const doc = {
     description: "REST API for E-Commerce application",
     version: "1.0.0",
   },
-  host: `https://e-commerce-app-express-postegresql.vercel.app`,
-  schemes: ["https"],
+  host: `localhost:${port}`,
+  schemes: ["http"],
   basePath: "",
 };
 
