@@ -2,14 +2,14 @@
   "version": 2,
   "buildCommand": "npm run build",
   "functions": {
-    "api/server.js": {
+    "server.ts": {
       "includeFiles": "swagger-output.json"
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/server.js",
+      "dest": "server.ts",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     }
   ]
