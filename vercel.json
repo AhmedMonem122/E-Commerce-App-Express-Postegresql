@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "functions": {
     "server.ts": {
-      "includeFiles": "swagger-output.json"
+      "includeFiles": "{dist/openapi.yaml,node_modules/swagger-ui-dist/**}"
     }
   },
   "routes": [
