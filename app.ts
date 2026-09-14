@@ -46,7 +46,8 @@ app.use(
   "/api-docs",
   swaggerUi.serve,
   (req: Request, res: Response, next: NextFunction) => {
-    const swaggerSpecPath = path.resolve("./swagger-output.json");
+    const swaggerSpecPath = path.join(process.cwd(), "swagger-output.json");
+
     if (fs.existsSync(swaggerSpecPath)) {
       const swaggerSpec = JSON.parse(fs.readFileSync(swaggerSpecPath, "utf8"));
       swaggerUi.setup(swaggerSpec)(req, res, next);
