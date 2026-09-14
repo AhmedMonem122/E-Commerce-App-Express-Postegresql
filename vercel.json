@@ -2,14 +2,14 @@
   "version": 2,
   "buildCommand": "npm run build",
   "functions": {
-    "server.ts": {
+    "server.js": {
       "includeFiles": "{dist/openapi.yaml,node_modules/swagger-ui-dist/**}"
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "server.ts",
+      "dest": "server.js",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     }
   ]
