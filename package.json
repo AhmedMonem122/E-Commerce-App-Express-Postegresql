@@ -7,6 +7,7 @@
   "type": "module",
   "main": "server.ts",
   "scripts": {
+    "build": "tsx swagger.ts",
     "start": "tsx swagger.ts && nodemon --exec tsx server.ts",
     "start:prod": "cross-env NODE_ENV=production tsx swagger.ts && nodemon --exec tsx server.ts"
   },
