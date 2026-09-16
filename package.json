@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsx swagger.ts",
     "start": "tsx swagger.ts && nodemon --exec tsx server.ts",
-    "start:prod": "cross-env NODE_ENV=production tsx swagger.ts && nodemon --exec tsx server.ts"
+    "start:prod": "cross-env NODE_ENV=production tsx swagger.ts && cross-env NODE_ENV=production nodemon --exec tsx server.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
