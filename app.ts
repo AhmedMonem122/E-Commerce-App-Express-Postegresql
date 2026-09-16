@@ -33,14 +33,79 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.use("/api/v1/products", productRouter);
-app.use("/api/v1/categories", categoryRouter);
-app.use("/api/v1/brands", brandRouter);
-app.use("/api/v1/wishlist", wishlistRouter);
-app.use("/api/v1/cart", cartRouter);
-app.use("/api/v1/reviews", reviewRouter);
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/payment", paymentRouter);
+// prettier-ignore
+app.use("/api/v1/products", productRouter
+    /*
+    #swagger.tags = ['Products']
+
+     #swagger.security = [{
+        "bearerAuth": []
+    }]
+    */
+);
+
+// prettier-ignore
+app.use(
+  "/api/v1/categories",
+  categoryRouter
+  /*
+    #swagger.tags = ['Categories']
+  */
+);
+
+// prettier-ignore
+app.use(
+  "/api/v1/brands",
+  brandRouter
+  /*
+    #swagger.tags = ['Brands']
+  */
+);
+
+// prettier-ignore
+app.use(
+  "/api/v1/wishlist",
+  wishlistRouter
+  /*
+    #swagger.tags = ['Wishlist']
+  */
+);
+
+// prettier-ignore
+app.use(
+  "/api/v1/cart",
+  cartRouter
+  /*
+    #swagger.tags = ['Cart']
+  */
+);
+
+// prettier-ignore
+app.use(
+  "/api/v1/reviews",
+  reviewRouter
+  /*
+    #swagger.tags = ['Reviews']
+  */
+);
+
+// prettier-ignore
+app.use(
+  "/api/v1/users",
+  userRouter
+  /*
+    #swagger.tags = ['Users']
+  */
+);
+
+// prettier-ignore
+app.use(
+  "/api/v1/payment",
+  paymentRouter
+  /*
+    #swagger.tags = ['Payment']
+  */
+);
 
 const SWAGGER_CDN_VERSION = "4.15.5";
 const CSS_URL = `https://cloudflare.com${SWAGGER_CDN_VERSION}/swagger-ui.min.css`;
