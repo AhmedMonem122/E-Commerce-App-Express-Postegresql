@@ -13,6 +13,15 @@ const doc = {
   host: `localhost:${port}`,
   schemes: ["http"],
   basePath: "",
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
 };
 
 const outputFile = "./swagger-output.json";
