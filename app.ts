@@ -37,10 +37,6 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/v1/products", productRouter
     /*
     #swagger.tags = ['Products']
-
-     #swagger.security = [{
-        "bearerAuth": []
-    }]
     */
 );
 
@@ -68,6 +64,10 @@ app.use(
   wishlistRouter
   /*
     #swagger.tags = ['Wishlist']
+
+    #swagger.security = [{
+      bearerAuth: []
+    }]
   */
 );
 
@@ -77,6 +77,10 @@ app.use(
   cartRouter
   /*
     #swagger.tags = ['Cart']
+
+    #swagger.security = [{
+      bearerAuth: []
+    }]
   */
 );
 
@@ -86,6 +90,10 @@ app.use(
   reviewRouter
   /*
     #swagger.tags = ['Reviews']
+ 
+    #swagger.security = [{
+      bearerAuth: []
+    }]
   */
 );
 
@@ -104,6 +112,10 @@ app.use(
   paymentRouter
   /*
     #swagger.tags = ['Payment']
+
+    #swagger.security = [{
+      bearerAuth: []
+    }]
   */
 );
 
