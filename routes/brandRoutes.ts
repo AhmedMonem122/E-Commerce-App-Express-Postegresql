@@ -18,10 +18,34 @@ router.use("/:brandId/products", filterByBrands, productRouter);
 
 router
   .route("/")
-  .get(getAllBrands)
+  .get(
+    /*
+      #swagger.parameters['page'] = {
+        $ref: '#/components/parameters/pageParam'
+      }
+      #swagger.parameters['limit'] = {
+        $ref: '#/components/parameters/limitParam'
+      }
+      #swagger.parameters['sort'] = {
+        $ref: '#/components/parameters/sortParam'
+      }
+      #swagger.parameters['fields'] = {
+        $ref: '#/components/parameters/fieldsParam'
+      }
+      #swagger.parameters['search'] = {
+        $ref: '#/components/parameters/searchParam'
+      }
+    */
+    getAllBrands,
+  )
   .post(
     protect,
     restrictTo("ADMIN"),
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
     uploadBrandImage,
     uploadBrandImageToSupabase,
     addBrand,
@@ -33,10 +57,24 @@ router
   .patch(
     protect,
     restrictTo("ADMIN"),
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
     uploadBrandImage,
     uploadBrandImageToSupabase,
     updateBrand,
   )
-  .delete(protect, restrictTo("ADMIN"), deleteBrand);
+  .delete(
+    protect,
+    restrictTo("ADMIN"),
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+    deleteBrand,
+  );
 
 export default router;
