@@ -23,10 +23,34 @@ router.route("/product-stats").get(getProductStats);
 
 router
   .route("/")
-  .get(getAllProducts)
+  .get(
+    /*
+      #swagger.parameters['page'] = {
+        $ref: '#/components/parameters/pageParam'
+      }
+      #swagger.parameters['limit'] = {
+        $ref: '#/components/parameters/limitParam'
+      }
+      #swagger.parameters['sort'] = {
+        $ref: '#/components/parameters/sortParam'
+      }
+      #swagger.parameters['fields'] = {
+        $ref: '#/components/parameters/fieldsParam'
+      }
+      #swagger.parameters['search'] = {
+        $ref: '#/components/parameters/searchParam'
+      }
+    */
+    getAllProducts,
+  )
   .post(
     protect,
     restrictTo("ADMIN"),
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+    */
     uploadProductImages,
     uploadProductImagesToSupabase,
     addProduct,
@@ -38,10 +62,24 @@ router
   .patch(
     protect,
     restrictTo("ADMIN"),
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+    */
     uploadProductImages,
     uploadProductImagesToSupabase,
     updateProduct,
   )
-  .delete(protect, restrictTo("ADMIN"), deleteProduct);
+  .delete(
+    protect,
+    restrictTo("ADMIN"),
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+    */
+    deleteProduct,
+  );
 
 export default router;
