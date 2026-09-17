@@ -20,7 +20,29 @@ router.get("/myPayments", getUserPayments);
 
 router.use(restrictTo("ADMIN"));
 
-router.route("/").get(getAllPayments).post(addPayment);
+router
+  .route("/")
+  .get(
+    /*
+      #swagger.parameters['page'] = {
+        $ref: '#/components/parameters/pageParam'
+      }
+      #swagger.parameters['limit'] = {
+        $ref: '#/components/parameters/limitParam'
+      }
+      #swagger.parameters['sort'] = {
+        $ref: '#/components/parameters/sortParam'
+      }
+      #swagger.parameters['fields'] = {
+        $ref: '#/components/parameters/fieldsParam'
+      }
+      #swagger.parameters['search'] = {
+        $ref: '#/components/parameters/searchParam'
+      }
+    */
+    getAllPayments,
+  )
+  .post(addPayment);
 
 router
   .route("/:id")
