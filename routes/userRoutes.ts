@@ -31,15 +31,92 @@ router.put("/resetPassword/:token", resetPassword);
 
 router.use(protect);
 
-router.put("/updateMyPassword", updatePassword);
-router.get("/me", getMe, getUser);
-router.patch("/updateMe", uploadUserPhoto, uploadUserPhotoToFirebase, updateMe);
-router.delete("/deleteMe", deleteMe);
+router.put(
+  "/updateMyPassword",
+  /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+  updatePassword,
+);
+router.get(
+  "/me",
+  /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+  getMe,
+  getUser,
+);
+router.patch(
+  "/updateMe",
+  /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+  uploadUserPhoto,
+  uploadUserPhotoToFirebase,
+  updateMe,
+);
+router.delete(
+  "/deleteMe",
+  /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+  deleteMe,
+);
 
 router.use(restrictTo("ADMIN"));
 
-router.route("/").get(getAllUsers).post(createUser);
+router
+  .route("/")
+  .get(
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+    getAllUsers,
+  )
+  .post(
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+    createUser,
+  );
 
-router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
+router
+  .route("/:id")
+  .get(
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+    getUser,
+  )
+  .patch(
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+    updateUser,
+  )
+  .delete(
+    /*
+    #swagger.security = [{
+      bearerAuth: []
+    }]
+  */
+    deleteUser,
+  );
 
 export default router;
