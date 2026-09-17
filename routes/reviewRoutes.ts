@@ -15,7 +15,26 @@ router.use(protect);
 
 router
   .route("/")
-  .get(getAllReviews)
+  .get(
+    /*
+      #swagger.parameters['page'] = {
+        $ref: '#/components/parameters/pageParam'
+      }
+      #swagger.parameters['limit'] = {
+        $ref: '#/components/parameters/limitParam'
+      }
+      #swagger.parameters['sort'] = {
+        $ref: '#/components/parameters/sortParam'
+      }
+      #swagger.parameters['fields'] = {
+        $ref: '#/components/parameters/fieldsParam'
+      }
+      #swagger.parameters['search'] = {
+        $ref: '#/components/parameters/searchParam'
+      }
+    */
+    getAllReviews,
+  )
   .post(protect, restrictTo("USER"), setProductUserIds, addReview);
 
 router
