@@ -78,10 +78,16 @@ export const getOne = (model: any, modelName: string, include?: any) =>
     });
   });
 
-export const addOne = (model: any, modelName: string) =>
+export const addOne = (
+  model: any,
+  modelName: string,
+  transformData?: (data: any) => any,
+) =>
   catchAsync(async (req: Request, res: Response) => {
+    const data = transformData ? transformData(req.body) : req.body;
+
     const doc = await model.create({
-      data: req.body,
+      data,
     });
 
     res.status(201).json({
@@ -92,17 +98,23 @@ export const addOne = (model: any, modelName: string) =>
     });
   });
 
-export const updateOne = (model: any, modelName: string) =>
+export const updateOne = (
+  model: any,
+  modelName: string,
+  transformData?: (data: any) => any,
+) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const doc = await model
-      .update({
-        where: { id: req.params.id },
-        data: {
-          ...req.body,
-          updatedAt: new Date(),
-        },
-      })
-      .catch(() => null);
+    const data = transformData ? transformData(req.body) : req.body;
+
+    const doc = await model.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
+    });
 
     if (!doc) {
       return next(new AppError(`There is no ${modelName} with that id!`, 404));
