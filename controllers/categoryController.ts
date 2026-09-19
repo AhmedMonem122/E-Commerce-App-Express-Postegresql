@@ -61,6 +61,28 @@ export const getSpecificCategory = getOne(prisma.category, "category", {
 
 export const addCategory = addOne(prisma.category, "category");
 
-export const updateCategory = updateOne(prisma.category, "category");
+export const updateCategory = updateOne(prisma.category, "category", (data) => {
+  const { brands, products, ...rest } = data;
+
+  return {
+    ...rest,
+
+    ...(brands !== undefined && {
+      brands: {
+        set: brands.map((id: string) => ({
+          id,
+        })),
+      },
+    }),
+
+    ...(products !== undefined && {
+      products: {
+        set: products.map((id: string) => ({
+          id,
+        })),
+      },
+    }),
+  };
+});
 
 export const deleteCategory = deleteOne(prisma.category, "category");
