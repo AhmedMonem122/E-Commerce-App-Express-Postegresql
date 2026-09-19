@@ -59,7 +59,14 @@ export const getSpecificBrand = getOne(prisma.brand, "brand", {
   },
 });
 
-export const addBrand = addOne(prisma.brand, "brand");
+export const addBrand = addOne(prisma.brand, "brand", (data) => {
+  const { category, ...rest } = data;
+
+  return {
+    ...rest,
+    categoryId: category,
+  };
+});
 
 export const updateBrand = updateOne(prisma.brand, "brand");
 
