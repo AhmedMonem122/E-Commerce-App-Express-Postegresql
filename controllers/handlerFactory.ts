@@ -130,11 +130,9 @@ export const updateOne = (
 
 export const deleteOne = (model: any, modelName: string) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await model
-      .delete({
-        where: { id: req.params.id },
-      })
-      .catch(() => null);
+    await model.delete({
+      where: { id: req.params.id },
+    });
 
     res.status(204).json({
       status: "success",
