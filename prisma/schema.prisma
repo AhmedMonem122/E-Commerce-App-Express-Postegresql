@@ -45,10 +45,10 @@ model Product {
   price Float
 
   brandId String?
-  brand   Brand?  @relation(fields: [brandId], references: [id])
+  brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: SetNull)
 
   categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   reviews Review[]
 
@@ -101,8 +101,8 @@ model Brand {
   description String
   image       String
 
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   products Product[] // auto relation (NO manual storing)
 
