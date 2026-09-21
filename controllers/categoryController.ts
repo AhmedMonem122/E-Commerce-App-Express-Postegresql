@@ -38,6 +38,28 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
+const parseIds = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Not JSON, treat it as a single ID
+    }
+
+    return [value];
+  }
+
+  return [];
+};
+
 // ==============================
 // IMAGE UPLOAD
 // ==============================
@@ -59,7 +81,25 @@ export const getSpecificCategory = getOne(prisma.category, "category", {
   products: true,
 });
 
-export const addCategory = addOne(prisma.category, "category");
+export const addCategory = addOne(prisma.category, "category", (data) => {
+  const { brands, products, ...rest } = data;
+
+  return {
+    ...rest,
+
+    ...(brands !== undefined && {
+      brands: {
+        connect: parseIds(brands).map((id) => ({ id })),
+      },
+    }),
+
+    ...(products !== undefined && {
+      products: {
+        connect: parseIds(products).map((id) => ({ id })),
+      },
+    }),
+  };
+});
 
 export const updateCategory = updateOne(prisma.category, "category", (data) => {
   const { brands, products, ...rest } = data;
@@ -69,7 +109,7 @@ export const updateCategory = updateOne(prisma.category, "category", (data) => {
 
     ...(brands !== undefined && {
       brands: {
-        set: brands.map((id: string) => ({
+        set: parseIds(brands).map((id) => ({
           id,
         })),
       },
@@ -77,7 +117,7 @@ export const updateCategory = updateOne(prisma.category, "category", (data) => {
 
     ...(products !== undefined && {
       products: {
-        set: products.map((id: string) => ({
+        set: parseIds(products).map((id) => ({
           id,
         })),
       },
