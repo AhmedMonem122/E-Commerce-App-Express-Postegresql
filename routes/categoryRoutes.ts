@@ -45,6 +45,59 @@ router
     #swagger.security = [{
       bearerAuth: []
     }]
+
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            type: 'object',
+            required: ['title', 'description', 'image'],
+          properties: {
+            title: {
+              type: 'string',
+              example: 'Electronics'
+            },
+
+            description: {
+              type: 'string',
+              example: 'Electronic products and devices'
+            },
+
+            image: {
+              type: 'string',
+              format: 'binary'
+            },
+
+            brands: {
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              example: [
+                'cmjBrand123',
+                'cmjBrand456'
+              ],
+              description: 'Optional list of Brand IDs'
+            },
+
+            products: {
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              example: [
+                'cmjProduct123',
+                'cmjProduct456'
+              ],
+              description: 'Optional list of Product IDs'
+            }
+          }
+          }
+        }
+      }
+    }
+
   */
     uploadCategoryImage,
     uploadCategoryImageToSupabase,
@@ -53,15 +106,67 @@ router
 
 router
   .route("/:id")
-  .get(getSpecificCategory)
+  .get(
+    /*
+  #swagger.parameters['id'] = {
+    in: 'path',
+    required: true,
+    schema: {
+      type: 'string'
+    },
+    description: 'Category ID',
+    example: 'cmj123abc456'
+  }
+*/
+    getSpecificCategory,
+  )
   .patch(
     protect,
     restrictTo("ADMIN"),
     /*
-    #swagger.security = [{
-      bearerAuth: []
-    }]
-  */
+  #swagger.security = [{
+    bearerAuth: []
+  }]
+
+  #swagger.requestBody = {
+    required: true,
+    content: {
+      'multipart/form-data': {
+        schema: {
+          type: 'object',
+          properties: {
+            title: {
+              type: 'string',
+              example: 'Electronics'
+            },
+            description: {
+              type: 'string',
+              example: 'Updated electronics category'
+            },
+            image: {
+              type: 'string',
+              format: 'binary'
+            },
+            brands: {
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              example: ['brandId1', 'brandId2']
+            },
+            products: {
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              example: ['productId1', 'productId2']
+            }
+          }
+        }
+      }
+    }
+  }
+*/
     uploadCategoryImage,
     uploadCategoryImageToSupabase,
     updateCategory,
@@ -70,10 +175,20 @@ router
     protect,
     restrictTo("ADMIN"),
     /*
-    #swagger.security = [{
-      bearerAuth: []
-    }]
-  */
+  #swagger.security = [{
+    bearerAuth: []
+  }]
+
+  #swagger.parameters['id'] = {
+    in: 'path',
+    required: true,
+    schema: {
+      type: 'string'
+    },
+    description: 'Category ID',
+    example: 'cmj123abc456'
+  }
+*/
     deleteCategory,
   );
 
