@@ -102,7 +102,26 @@ export const addReview = catchAsync(
 // ==============================
 // GET REVIEWS
 // ==============================
-export const getAllReviews = getAll(prisma.review, "reviews");
+export const getAllReviews = getAll(prisma.review, "reviews", {
+  filterFields: ["rating", "productId", "userId"],
+
+  sortFields: ["rating", "createdAt", "updatedAt"],
+
+  selectFields: [
+    "id",
+    "review",
+    "rating",
+    "reactions",
+    "productId",
+    "userId",
+    "createdAt",
+    "updatedAt",
+  ],
+
+  searchFields: ["review"],
+
+  maxLimit: 100,
+});
 
 export const getReview = getOne(prisma.review, "review", {
   user: {
