@@ -50,7 +50,7 @@ export const uploadBrandImageToSupabase = uploadImageToSupabase(
 // CRUD OPERATIONS
 // ==============================
 
-getAll(prisma.brand, "brands", {
+export const getAllBrands = getAll(prisma.brand, "brands", {
   filterFields: ["categoryId"],
 
   sortFields: ["title", "createdAt"],
