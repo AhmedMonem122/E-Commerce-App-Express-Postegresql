@@ -1,5 +1,16 @@
-import express, { type NextFunction, Request, Response } from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
+
 import morgan from "morgan";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import hpp from "hpp";
+import compression from "compression";
+import cors from "cors";
+
 import productRouter from "./routes/productRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import brandRouter from "./routes/brandRoutes.js";
@@ -8,16 +19,60 @@ import cartRouter from "./routes/cartRoutes.js";
 import reviewRouter from "./routes/reviewRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import paymentRouter from "./routes/paymentRoutes.js";
+
 import AppError from "./utils/appError.js";
 import globalErrorHandler from "./controllers/errorController.js";
-import bodyParser from "body-parser";
-import cors from "cors";
+
 import { webhookCheckout } from "./controllers/paymentController.js";
+
 import fs from "fs";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 
 const app = express();
+
+// ======================================================
+// 1. SECURITY HTTP HEADERS
+// ======================================================
+
+app.use(helmet());
+
+// ======================================================
+// 2. CORS
+// ======================================================
+
+app.use(cors());
+
+// app.use(
+//   cors({
+//     origin: process.env.CLIENT_URL || "http://localhost:3000",
+//     // credentials: true,
+//   }),
+// );
+
+// ======================================================
+// 3. RATE LIMITING
+// ======================================================
+
+const limiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  limit: 100,
+
+  message: {
+    status: "fail",
+    message: "Too many requests from this IP, please try again later.",
+  },
+
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api", limiter);
+
+// ======================================================
+// 4. STRIPE WEBHOOK
+// MUST COME BEFORE express.json()
+// ======================================================
 
 app.post(
   "/webhook-checkout",
@@ -25,104 +80,146 @@ app.post(
   webhookCheckout,
 );
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(cors());
+// ======================================================
+// 5. BODY PARSING
+// ======================================================
+
+app.use(
+  express.json({
+    limit: "10kb",
+  }),
+);
+
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: "10kb",
+  }),
+);
+
+// ======================================================
+// 6. HTTP PARAMETER POLLUTION
+// ======================================================
+
+app.use(
+  hpp({
+    whitelist: ["ratingsQuantity", "ratingsAverage", "price"],
+  }),
+);
+
+// ======================================================
+// 7. RESPONSE COMPRESSION
+// ======================================================
+
+app.use(compression());
+
+// ======================================================
+// 8. DEVELOPMENT LOGGING
+// ======================================================
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// prettier-ignore
-app.use("/api/v1/products", productRouter
-    /*
+// ======================================================
+// 9. ROUTES
+// ======================================================
+
+// Products
+app.use(
+  "/api/v1/products",
+  productRouter,
+  /*
     #swagger.tags = ['Products']
-    */
+  */
 );
 
-// prettier-ignore
+// Categories
 app.use(
   "/api/v1/categories",
-  categoryRouter
+  categoryRouter,
   /*
     #swagger.tags = ['Categories']
   */
 );
 
-// prettier-ignore
+// Brands
 app.use(
   "/api/v1/brands",
-  brandRouter
+  brandRouter,
   /*
     #swagger.tags = ['Brands']
   */
 );
 
-// prettier-ignore
+// Wishlist
 app.use(
   "/api/v1/wishlist",
-  wishlistRouter
+  wishlistRouter,
   /*
     #swagger.tags = ['Wishlist']
-
     #swagger.security = [{
       bearerAuth: []
     }]
   */
 );
 
-// prettier-ignore
+// Cart
 app.use(
   "/api/v1/cart",
-  cartRouter
+  cartRouter,
   /*
     #swagger.tags = ['Cart']
-
     #swagger.security = [{
       bearerAuth: []
     }]
   */
 );
 
-// prettier-ignore
+// Reviews
 app.use(
   "/api/v1/reviews",
-  reviewRouter
+  reviewRouter,
   /*
     #swagger.tags = ['Reviews']
- 
     #swagger.security = [{
       bearerAuth: []
     }]
   */
 );
 
-// prettier-ignore
+// Users
 app.use(
   "/api/v1/users",
-  userRouter
+  userRouter,
   /*
     #swagger.tags = ['Users']
   */
 );
 
-// prettier-ignore
+// Payment
 app.use(
   "/api/v1/payment",
-  paymentRouter
+  paymentRouter,
   /*
     #swagger.tags = ['Payment']
-
     #swagger.security = [{
       bearerAuth: []
     }]
   */
 );
 
+// ======================================================
+// 10. SWAGGER
+// ======================================================
+
 const SWAGGER_CDN_VERSION = "4.15.5";
-const CSS_URL = `https://cloudflare.com${SWAGGER_CDN_VERSION}/swagger-ui.min.css`;
-const BUNDLE_URL = `https://cloudflare.com${SWAGGER_CDN_VERSION}/swagger-ui-bundle.min.js`;
-const PRESET_URL = `https://cloudflare.com${SWAGGER_CDN_VERSION}/swagger-ui-standalone-preset.min.js`;
+
+const CSS_URL = `https://unpkg.com/swagger-ui-dist@${SWAGGER_CDN_VERSION}/swagger-ui.css`;
+
+const BUNDLE_URL = `https://unpkg.com/swagger-ui-dist@${SWAGGER_CDN_VERSION}/swagger-ui-bundle.js`;
+
+const PRESET_URL = `https://unpkg.com/swagger-ui-dist@${SWAGGER_CDN_VERSION}/swagger-ui-standalone-preset.js`;
 
 app.use(
   "/api-docs",
@@ -145,9 +242,17 @@ app.use(
   },
 );
 
+// ======================================================
+// 11. UNKNOWN ROUTE
+// ======================================================
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+// ======================================================
+// 12. GLOBAL ERROR HANDLER
+// ======================================================
 
 app.use(globalErrorHandler);
 
