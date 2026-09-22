@@ -5,7 +5,12 @@ import express, {
 } from "express";
 
 import morgan from "morgan";
-import helmet from "helmet";
+
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const helmet = require("helmet");
+
 import { rateLimit } from "express-rate-limit";
 import hpp from "hpp";
 import compression from "compression";
