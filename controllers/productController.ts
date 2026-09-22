@@ -114,7 +114,7 @@ export const getProductStats = catchAsync(
 // FACTORY-BASED CRUD
 // ==============================
 
-getAll(prisma.product, "products", {
+export const getAllProducts = getAll(prisma.product, "products", {
   filterFields: [
     "price",
     "ratingsAverage",
