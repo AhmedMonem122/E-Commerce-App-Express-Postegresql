@@ -2088,35 +2088,15 @@
         ],
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
+          "default": {
+            "description": ""
           }
         },
         "security": [
           {
             "bearerAuth": []
           }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "photo": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  },
-                  "passwordConfirm": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/api/v1/users/deleteMe": {
@@ -2126,8 +2106,8 @@
         ],
         "description": "",
         "responses": {
-          "204": {
-            "description": "No Content"
+          "default": {
+            "description": ""
           }
         },
         "security": [
