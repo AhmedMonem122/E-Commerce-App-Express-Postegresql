@@ -1,68 +1,134 @@
 import type { Request, Response, NextFunction } from "express";
+
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
+
 import { APIFeatures } from "../utils/apiFeatures.js";
+
 import { supabase } from "../config/supabase.js";
 
-export const getAll = (model: any, modelName: string) =>
+/* =====================================================
+   GET ALL
+===================================================== */
+
+export interface GetAllOptions {
+  filterFields?: string[];
+  sortFields?: string[];
+  selectFields?: string[];
+  searchFields?: string[];
+  maxLimit?: number;
+}
+
+export const getAll = (
+  model: any,
+  modelName: string,
+  options: GetAllOptions = {},
+) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    // Nested filtering
+    /*
+     * =========================
+     * NESTED FILTERING
+     * =========================
+     */
+
     let filter: any = {};
 
     if (req.params.productId) {
-      filter = { productId: req.params.productId };
+      filter = {
+        productId: req.params.productId,
+      };
     }
 
-    const features = new APIFeatures(req.query)
+    /*
+     * =========================
+     * API FEATURES
+     * =========================
+     */
+
+    const features = new APIFeatures(req.query, options)
       .filter()
-      .search(["title", "description"])
+      .search()
       .sort()
       .limitFields()
       .paginate();
 
     const queryOptions = features.build();
 
+    /*
+     * =========================
+     * DATABASE QUERY
+     * =========================
+     */
+
+    const finalWhere = {
+      ...queryOptions.where,
+      ...filter,
+    };
+
     const [data, total] = await Promise.all([
       model.findMany({
         ...queryOptions,
-        where: {
-          ...queryOptions.where,
-          ...filter,
-        },
+        where: finalWhere,
       }),
+
       model.count({
-        where: {
-          ...queryOptions.where,
-          ...filter,
-        },
+        where: finalWhere,
       }),
     ]);
 
+    /*
+     * =========================
+     * PAGINATION METADATA
+     * =========================
+     */
+
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 40;
+
+    const limit = Math.min(
+      Number(req.query.limit) || 40,
+      options.maxLimit ?? 100,
+    );
+
     const numberOfPages = Math.ceil(total / limit);
+
+    /*
+     * =========================
+     * RESPONSE
+     * =========================
+     */
 
     res.status(200).json({
       status: "success",
       results: total,
       currentResults: data.length,
+
       metadata: {
         currentPage: page,
         numberOfPages,
         limit,
+
         prevPage: page === 1 ? undefined : page - 1,
+
         nextPage: page >= numberOfPages ? undefined : page + 1,
       },
+
       data: {
         [modelName]: data,
       },
     });
   });
 
+/* =====================================================
+   GET ONE
+===================================================== */
+
 export const getOne = (model: any, modelName: string, include?: any) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const doc = await model.findUnique({
-      where: { id: req.params.id },
+      where: {
+        id: req.params.id,
+      },
+
       include,
     });
 
@@ -72,11 +138,16 @@ export const getOne = (model: any, modelName: string, include?: any) =>
 
     res.status(200).json({
       status: "success",
+
       data: {
         [modelName]: doc,
       },
     });
   });
+
+/* =====================================================
+   ADD ONE
+===================================================== */
 
 export const addOne = (
   model: any,
@@ -92,11 +163,16 @@ export const addOne = (
 
     res.status(201).json({
       status: "success",
+
       data: {
         [modelName]: doc,
       },
     });
   });
+
+/* =====================================================
+   UPDATE ONE
+===================================================== */
 
 export const updateOne = (
   model: any,
@@ -110,28 +186,37 @@ export const updateOne = (
       where: {
         id: req.params.id,
       },
+
       data: {
         ...data,
+
         updatedAt: new Date(),
       },
     });
 
-    if (!doc) {
-      return next(new AppError(`There is no ${modelName} with that id!`, 404));
-    }
+    // if (!doc) {
+    //   return next(new AppError(`There is no ${modelName} with that id!`, 404));
+    // }
 
     res.status(200).json({
       status: "success",
+
       data: {
         [modelName]: doc,
       },
     });
   });
 
+/* =====================================================
+   DELETE ONE
+===================================================== */
+
 export const deleteOne = (model: any, modelName: string) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     await model.delete({
-      where: { id: req.params.id },
+      where: {
+        id: req.params.id,
+      },
     });
 
     res.status(204).json({
@@ -140,23 +225,31 @@ export const deleteOne = (model: any, modelName: string) =>
     });
   });
 
+/* =====================================================
+   UPLOAD IMAGE TO SUPABASE
+===================================================== */
+
 export const uploadImageToSupabase = (fileDest: string, bucket: string) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.file) return next();
+    if (!req.file) {
+      return next();
+    }
 
     const file = req.file;
 
     const safeName = fileDest.slice(0, -1).toLowerCase();
 
-    const filename = `${fileDest}/${safeName}-${
-      req.params[`${safeName}Id`] || ""
-    }-${Date.now()}-${file.originalname}`;
+    const filename =
+      `${fileDest}/${safeName}-` +
+      `${req.params[`${safeName}Id`] || ""}-` +
+      `${Date.now()}-` +
+      `${file.originalname}`;
 
-    // upload to supabase storage
     const { error } = await supabase.storage
       .from(bucket)
       .upload(filename, file.buffer, {
         contentType: file.mimetype,
+
         upsert: false,
       });
 
@@ -164,7 +257,6 @@ export const uploadImageToSupabase = (fileDest: string, bucket: string) =>
       return next(error);
     }
 
-    // get public url
     const {
       data: { publicUrl },
     } = supabase.storage.from(bucket).getPublicUrl(filename);
@@ -173,6 +265,10 @@ export const uploadImageToSupabase = (fileDest: string, bucket: string) =>
 
     next();
   });
+
+/* =====================================================
+   PRODUCT IMAGES
+===================================================== */
 
 export const uploadProductImagesToSupabaseFactory = (bucket: string) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -185,20 +281,24 @@ export const uploadProductImagesToSupabaseFactory = (bucket: string) =>
       return next();
     }
 
-    // ==============================
-    // IMAGE COVER
-    // ==============================
+    /* =========================
+           IMAGE COVER
+        ========================= */
+
     if (files.imageCover?.length) {
       const cover = files.imageCover[0];
 
-      const coverName = `Products/product-${
-        req.params.id || ""
-      }-cover-${Date.now()}-${cover.originalname}`;
+      const coverName =
+        `Products/product-` +
+        `${req.params.id || ""}-` +
+        `cover-${Date.now()}-` +
+        `${cover.originalname}`;
 
       const { error: coverError } = await supabase.storage
         .from(bucket)
         .upload(coverName, cover.buffer, {
           contentType: cover.mimetype,
+
           upsert: false,
         });
 
@@ -213,20 +313,25 @@ export const uploadProductImagesToSupabaseFactory = (bucket: string) =>
       req.body.imageCover = coverURL;
     }
 
-    // ==============================
-    // PRODUCT IMAGES
-    // ==============================
+    /* =========================
+           PRODUCT IMAGES
+        ========================= */
+
     if (files.images?.length) {
       const imagesURLs = await Promise.all(
         files.images.map(async (file, i) => {
-          const imageName = `Products/product-${
-            req.params.id || ""
-          }-${Date.now()}-${i}-${file.originalname}`;
+          const imageName =
+            `Products/product-` +
+            `${req.params.id || ""}-` +
+            `${Date.now()}-` +
+            `${i}-` +
+            `${file.originalname}`;
 
           const { error } = await supabase.storage
             .from(bucket)
             .upload(imageName, file.buffer, {
               contentType: file.mimetype,
+
               upsert: false,
             });
 
