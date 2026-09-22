@@ -114,7 +114,42 @@ export const getProductStats = catchAsync(
 // FACTORY-BASED CRUD
 // ==============================
 
-export const getAllProducts = getAll(prisma.product, "products");
+getAll(prisma.product, "products", {
+  filterFields: [
+    "price",
+    "ratingsAverage",
+    "ratingsQuantity",
+    "brandId",
+    "categoryId",
+  ],
+
+  sortFields: [
+    "title",
+    "price",
+    "ratingsAverage",
+    "ratingsQuantity",
+    "createdAt",
+  ],
+
+  selectFields: [
+    "id",
+    "title",
+    "imageCover",
+    "images",
+    "description",
+    "ratingsAverage",
+    "ratingsQuantity",
+    "price",
+    "brandId",
+    "categoryId",
+    "createdAt",
+    "updatedAt",
+  ],
+
+  searchFields: ["title", "description"],
+
+  maxLimit: 100,
+});
 
 export const getSpecificProduct = getOne(prisma.product, "product", {
   brand: true,
