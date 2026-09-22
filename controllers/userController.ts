@@ -1,19 +1,22 @@
 import type { Request, Response, NextFunction } from "express";
 
 import multer from "multer";
+
 import bcrypt from "bcryptjs";
 
 import AppError from "../utils/appError.js";
+
 import catchAsync from "../utils/catchAsync.js";
 
 import * as factory from "./handlerFactory.js";
 
-import admin from "../config/firebase.js";
 import { prisma } from "../prisma/client.js";
 
 import { APIFeatures } from "../utils/apiFeatures.js";
 
-const storage = admin.storage().bucket();
+import { supabase } from "../config/supabase.js";
+
+import { deleteSupabaseFiles } from "../utils/supabaseStorage.js";
 
 /* =====================================================
    MULTER
@@ -49,10 +52,10 @@ const upload = multer({
 export const uploadUserPhoto = upload.single("photo");
 
 /* =====================================================
-   UPLOAD USER PHOTO TO FIREBASE
+   UPLOAD USER PHOTO TO SUPABASE
 ===================================================== */
 
-export const uploadUserPhotoToFirebase = catchAsync(
+export const uploadUserPhotoToSupabase = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     if (!req.file || !req.user) {
       return next();
@@ -60,31 +63,29 @@ export const uploadUserPhotoToFirebase = catchAsync(
 
     const file = req.file;
 
-    const safeUserName = req.user.name
-      .replace(/\s+/g, "-")
-      .replace(/[^\w-]/g, "");
-
     const safeOriginalName = file.originalname.replace(/[^\w.-]/g, "-");
 
     const filename =
-      `Users/${safeUserName}-${req.user.id}` +
-      `/user-${req.user.id}-${safeOriginalName}-${Date.now()}`;
+      `Users/user-${req.user.id}-` + `${Date.now()}-${safeOriginalName}`;
 
-    const fileRef = storage.file(filename);
-
-    await fileRef.save(file.buffer, {
-      metadata: {
+    const { error } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET!)
+      .upload(filename, file.buffer, {
         contentType: file.mimetype,
-      },
-    });
+        upsert: false,
+      });
 
-    const downloadURL =
-      `https://firebasestorage.googleapis.com/v0/b/` +
-      `${process.env.FIREBASE_STORAGE_BUCKET}` +
-      `/o/${encodeURIComponent(filename)}` +
-      `?alt=media`;
+    if (error) {
+      return next(error);
+    }
 
-    req.body.photo = downloadURL;
+    const {
+      data: { publicUrl },
+    } = supabase.storage
+      .from(process.env.SUPABASE_BUCKET!)
+      .getPublicUrl(filename);
+
+    req.body.photo = publicUrl;
 
     next();
   },
@@ -154,6 +155,24 @@ export const updateMe = catchAsync(
       );
     }
 
+    /*
+     * Get old photo before updating
+     */
+
+    const oldUser = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+
+      select: {
+        photo: true,
+      },
+    });
+
+    if (!oldUser) {
+      return next(new AppError("User not found", 404));
+    }
+
     const filteredBody = filterObj(req.body, "name", "email", "photo");
 
     if (filteredBody.name !== undefined) {
@@ -173,6 +192,22 @@ export const updateMe = catchAsync(
 
       select: safeUserSelect,
     });
+
+    /*
+     * Delete old photo only if
+     * a new photo was uploaded
+     */
+
+    if (filteredBody.photo !== undefined && oldUser.photo) {
+      try {
+        await deleteSupabaseFiles(
+          [oldUser.photo],
+          process.env.SUPABASE_BUCKET!,
+        );
+      } catch (error) {
+        console.error("Failed to delete old user photo from Supabase:", error);
+      }
+    }
 
     res.status(200).json({
       status: "success",
@@ -205,10 +240,7 @@ export const deleteMe = catchAsync(
       },
     });
 
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
+    res.status(204).send();
   },
 );
 
@@ -227,19 +259,23 @@ export const getAllUsers = catchAsync(
     const options = features.build();
 
     /*
-        We intentionally don't use
-        options.select here.
-
-        User responses must always
-        use our safe whitelist.
-      */
+     * We intentionally don't use
+     * options.select here.
+     *
+     * User responses must always
+     * use our safe whitelist.
+     */
 
     const [users, total] = await Promise.all([
       prisma.user.findMany({
         where: options.where,
+
         orderBy: options.orderBy,
+
         skip: options.skip,
+
         take: options.take,
+
         select: safeUserSelect,
       }),
 
@@ -362,6 +398,24 @@ export const createUser = catchAsync(
 
 export const updateUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    /*
+     * Get old photo before update
+     */
+
+    const oldUser = await prisma.user.findUnique({
+      where: {
+        id: req.params.id as string,
+      },
+
+      select: {
+        photo: true,
+      },
+    });
+
+    if (!oldUser) {
+      return next(new AppError("There is no user with that id!", 404));
+    }
+
     const { name, email, password, role, photo, active } = req.body;
 
     const data: any = {};
@@ -412,6 +466,22 @@ export const updateUser = catchAsync(
       select: safeUserSelect,
     });
 
+    /*
+     * Delete old photo only if
+     * a new photo was provided
+     */
+
+    if (data.photo !== undefined && oldUser.photo) {
+      try {
+        await deleteSupabaseFiles(
+          [oldUser.photo],
+          process.env.SUPABASE_BUCKET!,
+        );
+      } catch (error) {
+        console.error("Failed to delete old user photo from Supabase:", error);
+      }
+    }
+
     res.status(200).json({
       status: "success",
 
@@ -426,4 +496,13 @@ export const updateUser = catchAsync(
    DELETE USER - ADMIN
 ===================================================== */
 
-export const deleteUser = factory.deleteOne(prisma.user, "user");
+export const deleteUser = factory.deleteOne(
+  prisma.user,
+  "user",
+
+  (user) => {
+    return user.photo ? [user.photo] : [];
+  },
+
+  process.env.SUPABASE_BUCKET!,
+);
