@@ -1,4 +1,5 @@
 import express from "express";
+
 import {
   register,
   login,
@@ -8,6 +9,7 @@ import {
   protect,
   restrictTo,
 } from "../controllers/authController.js";
+
 import {
   getMe,
   getUser,
@@ -23,13 +25,27 @@ import {
 
 const router = express.Router();
 
+/* =====================================================
+   PUBLIC AUTH ROUTES
+===================================================== */
+
 router.post("/signup", register);
+
 router.post("/signin", login);
 
 router.post("/forgotPassword", forgotPassword);
+
 router.put("/resetPassword/:token", resetPassword);
 
+/* =====================================================
+   PROTECTED ROUTES
+===================================================== */
+
 router.use(protect);
+
+/* =========================
+   CURRENT USER
+========================= */
 
 router.put(
   "/updateMyPassword",
@@ -40,6 +56,7 @@ router.put(
   */
   updatePassword,
 );
+
 router.get(
   "/me",
   /*
@@ -50,6 +67,7 @@ router.get(
   getMe,
   getUser,
 );
+
 router.patch(
   "/updateMe",
   /*
@@ -61,6 +79,7 @@ router.patch(
   uploadUserPhotoToFirebase,
   updateMe,
 );
+
 router.delete(
   "/deleteMe",
   /*
@@ -71,24 +90,28 @@ router.delete(
   deleteMe,
 );
 
+/* =====================================================
+   ADMIN ROUTES
+===================================================== */
+
 router.use(restrictTo("ADMIN"));
 
 router
   .route("/")
   .get(
     /*
-    #swagger.security = [{
-      bearerAuth: []
-    }]
-  */
+      #swagger.security = [{
+        bearerAuth: []
+      }]
+    */
     getAllUsers,
   )
   .post(
     /*
-    #swagger.security = [{
-      bearerAuth: []
-    }]
-  */
+      #swagger.security = [{
+        bearerAuth: []
+      }]
+    */
     createUser,
   );
 
@@ -96,26 +119,26 @@ router
   .route("/:id")
   .get(
     /*
-    #swagger.security = [{
-      bearerAuth: []
-    }]
-  */
+      #swagger.security = [{
+        bearerAuth: []
+      }]
+    */
     getUser,
   )
   .patch(
     /*
-    #swagger.security = [{
-      bearerAuth: []
-    }]
-  */
+      #swagger.security = [{
+        bearerAuth: []
+      }]
+    */
     updateUser,
   )
   .delete(
     /*
-    #swagger.security = [{
-      bearerAuth: []
-    }]
-  */
+      #swagger.security = [{
+        bearerAuth: []
+      }]
+    */
     deleteUser,
   );
 
