@@ -168,6 +168,32 @@ export const getSpecificProduct = getOne(prisma.product, "product", {
 
 export const addProduct = addOne(prisma.product, "product");
 
-export const updateProduct = updateOne(prisma.product, "product");
+export const updateProduct = updateOne(
+  prisma.product,
+  "product",
 
-export const deleteProduct = deleteOne(prisma.product, "product");
+  undefined,
+
+  (oldProduct, data) => {
+    const images: string[] = [];
+
+    if (data.imageCover !== undefined && oldProduct.imageCover) {
+      images.push(oldProduct.imageCover);
+    }
+
+    if (data.images !== undefined) {
+      images.push(...(oldProduct.images || []));
+    }
+
+    return images;
+  },
+
+  process.env.SUPABASE_BUCKET!,
+);
+
+export const deleteProduct = deleteOne(
+  prisma.product,
+  "product",
+  (product) => [product.imageCover, ...(product.images || [])],
+  process.env.SUPABASE_BUCKET!,
+);
