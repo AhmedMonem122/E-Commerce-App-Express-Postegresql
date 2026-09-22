@@ -118,28 +118,51 @@ export const addCategory = addOne(prisma.category, "category", (data) => {
   };
 });
 
-export const updateCategory = updateOne(prisma.category, "category", (data) => {
-  const { brands, products, ...rest } = data;
+export const updateCategory = updateOne(
+  prisma.category,
+  "category",
 
-  return {
-    ...rest,
+  // transformData
+  (data) => {
+    const { brands, products, ...rest } = data;
 
-    ...(brands !== undefined && {
-      brands: {
-        set: parseIds(brands).map((id) => ({
-          id,
-        })),
-      },
-    }),
+    return {
+      ...rest,
 
-    ...(products !== undefined && {
-      products: {
-        set: parseIds(products).map((id) => ({
-          id,
-        })),
-      },
-    }),
-  };
-});
+      ...(brands !== undefined && {
+        brands: {
+          set: parseIds(brands).map((id) => ({
+            id,
+          })),
+        },
+      }),
 
-export const deleteCategory = deleteOne(prisma.category, "category");
+      ...(products !== undefined && {
+        products: {
+          set: parseIds(products).map((id) => ({
+            id,
+          })),
+        },
+      }),
+    };
+  },
+
+  // getOldImageUrls
+  (oldCategory, newData) => {
+    if (newData.image !== undefined) {
+      return [oldCategory.image];
+    }
+
+    return [];
+  },
+
+  // bucket
+  process.env.SUPABASE_BUCKET!,
+);
+
+export const deleteCategory = deleteOne(
+  prisma.category,
+  "category",
+  (category) => [category.image],
+  process.env.SUPABASE_BUCKET!,
+);
