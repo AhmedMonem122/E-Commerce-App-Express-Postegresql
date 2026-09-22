@@ -50,7 +50,25 @@ export const uploadBrandImageToSupabase = uploadImageToSupabase(
 // CRUD OPERATIONS
 // ==============================
 
-export const getAllBrands = getAll(prisma.brand, "brands");
+getAll(prisma.brand, "brands", {
+  filterFields: ["categoryId"],
+
+  sortFields: ["title", "createdAt"],
+
+  selectFields: [
+    "id",
+    "title",
+    "description",
+    "image",
+    "categoryId",
+    "createdAt",
+    "updatedAt",
+  ],
+
+  searchFields: ["title", "description"],
+
+  maxLimit: 100,
+});
 
 export const getSpecificBrand = getOne(prisma.brand, "brand", {
   include: {
