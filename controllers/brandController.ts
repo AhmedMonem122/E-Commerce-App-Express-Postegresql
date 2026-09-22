@@ -86,6 +86,19 @@ export const addBrand = addOne(prisma.brand, "brand", (data) => {
   };
 });
 
-export const updateBrand = updateOne(prisma.brand, "brand");
+export const updateBrand = updateOne(
+  prisma.brand,
+  "brand",
+  undefined,
+  (oldBrand, data) => {
+    return data.image !== undefined ? [oldBrand.image] : [];
+  },
+  process.env.SUPABASE_BUCKET!,
+);
 
-export const deleteBrand = deleteOne(prisma.brand, "brand");
+export const deleteBrand = deleteOne(
+  prisma.brand,
+  "brand",
+  (brand) => [brand.image],
+  process.env.SUPABASE_BUCKET!,
+);
