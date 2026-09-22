@@ -14,7 +14,7 @@ import {
   getMe,
   getUser,
   uploadUserPhoto,
-  uploadUserPhotoToFirebase,
+  uploadUserPhotoToSupabase,
   updateMe,
   deleteMe,
   getAllUsers,
@@ -76,7 +76,7 @@ router.patch(
     }]
   */
   uploadUserPhoto,
-  uploadUserPhotoToFirebase,
+  uploadUserPhotoToSupabase,
   updateMe,
 );
 
