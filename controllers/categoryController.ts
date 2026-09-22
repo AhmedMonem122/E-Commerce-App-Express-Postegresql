@@ -74,7 +74,24 @@ export const uploadCategoryImageToSupabase = uploadImageToSupabase(
 // CRUD OPERATIONS
 // ==============================
 
-export const getAllCategories = getAll(prisma.category, "categories");
+getAll(prisma.category, "categories", {
+  filterFields: [],
+
+  sortFields: ["title", "createdAt"],
+
+  selectFields: [
+    "id",
+    "title",
+    "description",
+    "image",
+    "createdAt",
+    "updatedAt",
+  ],
+
+  searchFields: ["title", "description"],
+
+  maxLimit: 100,
+});
 
 export const getSpecificCategory = getOne(prisma.category, "category", {
   brands: true,
