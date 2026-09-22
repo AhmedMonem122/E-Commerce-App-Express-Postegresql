@@ -74,7 +74,7 @@ export const uploadCategoryImageToSupabase = uploadImageToSupabase(
 // CRUD OPERATIONS
 // ==============================
 
-getAll(prisma.category, "categories", {
+export const getAllCategories = getAll(prisma.category, "categories", {
   filterFields: [],
 
   sortFields: ["title", "createdAt"],
