@@ -271,7 +271,28 @@ export const getUserPayments = catchAsync(
 // ==============================
 // FACTORY CRUD
 // ==============================
-export const getAllPayments = getAll(prisma.payment, "payments");
+export const getAllPayments = getAll(prisma.payment, "payments", {
+  filterFields: ["userId", "paid", "amount", "price"],
+
+  sortFields: ["price", "amount", "createdAt", "updatedAt"],
+
+  selectFields: [
+    "id",
+    "userId",
+    "price",
+    "amount",
+    "paid",
+    "shippingDetails",
+    "shippingPhone",
+    "shippingCity",
+    "createdAt",
+    "updatedAt",
+  ],
+
+  searchFields: [],
+
+  maxLimit: 100,
+});
 
 export const getSpecificPayment = getOne(prisma.payment, "payment", {
   items: {
