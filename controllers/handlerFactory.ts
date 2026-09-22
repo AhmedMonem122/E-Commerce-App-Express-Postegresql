@@ -6,6 +6,7 @@ import AppError from "../utils/appError.js";
 import { APIFeatures } from "../utils/apiFeatures.js";
 
 import { supabase } from "../config/supabase.js";
+import { deleteSupabaseFiles } from "../utils/supabaseStorage.js";
 
 /* =====================================================
    GET ALL
@@ -178,29 +179,53 @@ export const updateOne = (
   model: any,
   modelName: string,
   transformData?: (data: any) => any,
+  getOldImageUrls?: (oldDoc: any, newData: any) => string[],
+  bucket?: string,
 ) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    let oldDoc = null;
+
+    if (getOldImageUrls) {
+      oldDoc = await model.findUnique({
+        where: {
+          id: req.params.id,
+        },
+      });
+
+      if (!oldDoc) {
+        return next(
+          new AppError(`There is no ${modelName} with that id!`, 404),
+        );
+      }
+    }
+
     const data = transformData ? transformData(req.body) : req.body;
 
     const doc = await model.update({
       where: {
         id: req.params.id,
       },
-
       data: {
         ...data,
-
         updatedAt: new Date(),
       },
     });
 
-    // if (!doc) {
-    //   return next(new AppError(`There is no ${modelName} with that id!`, 404));
-    // }
+    if (oldDoc && getOldImageUrls && bucket) {
+      try {
+        const oldImageUrls = getOldImageUrls(oldDoc, data);
+
+        await deleteSupabaseFiles(oldImageUrls, bucket);
+      } catch (error) {
+        console.error(
+          `Failed to delete old ${modelName} images from Supabase:`,
+          error,
+        );
+      }
+    }
 
     res.status(200).json({
       status: "success",
-
       data: {
         [modelName]: doc,
       },
@@ -211,18 +236,43 @@ export const updateOne = (
    DELETE ONE
 ===================================================== */
 
-export const deleteOne = (model: any, modelName: string) =>
+export const deleteOne = (
+  model: any,
+  modelName: string,
+  getImageUrls?: (doc: any) => string[],
+  bucket?: string,
+) =>
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const doc = await model.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!doc) {
+      return next(new AppError(`There is no ${modelName} with that id!`, 404));
+    }
+
     await model.delete({
       where: {
         id: req.params.id,
       },
     });
 
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
+    if (getImageUrls && bucket) {
+      try {
+        const imageUrls = getImageUrls(doc);
+
+        await deleteSupabaseFiles(imageUrls, bucket);
+      } catch (error) {
+        console.error(
+          `Failed to delete ${modelName} images from Supabase:`,
+          error,
+        );
+      }
+    }
+
+    res.status(204).send();
   });
 
 /* =====================================================
