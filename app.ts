@@ -6,7 +6,7 @@ import express, {
 
 import morgan from "morgan";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import hpp from "hpp";
 import compression from "compression";
 import cors from "cors";
@@ -126,36 +126,40 @@ if (process.env.NODE_ENV === "development") {
 // ======================================================
 
 // Products
+// prettier-ignore
 app.use(
   "/api/v1/products",
-  productRouter,
+  productRouter
   /*
     #swagger.tags = ['Products']
   */
 );
 
 // Categories
+// prettier-ignore
 app.use(
   "/api/v1/categories",
-  categoryRouter,
+  categoryRouter
   /*
     #swagger.tags = ['Categories']
   */
 );
 
 // Brands
+// prettier-ignore
 app.use(
   "/api/v1/brands",
-  brandRouter,
+  brandRouter
   /*
     #swagger.tags = ['Brands']
   */
 );
 
 // Wishlist
+// prettier-ignore
 app.use(
   "/api/v1/wishlist",
-  wishlistRouter,
+  wishlistRouter
   /*
     #swagger.tags = ['Wishlist']
     #swagger.security = [{
@@ -165,9 +169,10 @@ app.use(
 );
 
 // Cart
+// prettier-ignore
 app.use(
   "/api/v1/cart",
-  cartRouter,
+  cartRouter
   /*
     #swagger.tags = ['Cart']
     #swagger.security = [{
@@ -177,9 +182,10 @@ app.use(
 );
 
 // Reviews
+// prettier-ignore
 app.use(
   "/api/v1/reviews",
-  reviewRouter,
+  reviewRouter
   /*
     #swagger.tags = ['Reviews']
     #swagger.security = [{
@@ -189,18 +195,20 @@ app.use(
 );
 
 // Users
+// prettier-ignore
 app.use(
   "/api/v1/users",
-  userRouter,
+  userRouter
   /*
     #swagger.tags = ['Users']
   */
 );
 
 // Payment
+// prettier-ignore
 app.use(
   "/api/v1/payment",
-  paymentRouter,
+  paymentRouter
   /*
     #swagger.tags = ['Payment']
     #swagger.security = [{
