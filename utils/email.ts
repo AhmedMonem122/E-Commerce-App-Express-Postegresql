@@ -1,7 +1,11 @@
 import nodemailer, { type Transporter } from "nodemailer";
 import pug from "pug";
 import { convert } from "html-to-text";
-import path from "path";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class Email {
   private to: string;
@@ -19,10 +23,12 @@ class Email {
   private newTransport(): Transporter {
     if (process.env.NODE_ENV === "production") {
       return nodemailer.createTransport({
-        service: "SendGrid",
+        host: process.env.BREVO_HOST,
+        port: Number(process.env.BREVO_PORT),
+        secure: Number(process.env.BREVO_PORT) === 465,
         auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
+          user: process.env.BREVO_USERNAME,
+          pass: process.env.BREVO_PASSWORD,
         },
       });
     }
