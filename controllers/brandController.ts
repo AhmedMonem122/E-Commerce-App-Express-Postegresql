@@ -71,20 +71,11 @@ export const getAllBrands = getAll(prisma.brand, "brands", {
 });
 
 export const getSpecificBrand = getOne(prisma.brand, "brand", {
-  include: {
-    category: true,
-    products: true,
-  },
+  category: true,
+  products: true,
 });
 
-export const addBrand = addOne(prisma.brand, "brand", (data) => {
-  const { category, ...rest } = data;
-
-  return {
-    ...rest,
-    categoryId: category,
-  };
-});
+export const addBrand = addOne(prisma.brand, "brand");
 
 export const updateBrand = updateOne(
   prisma.brand,
