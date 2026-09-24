@@ -11,6 +11,11 @@ import {
 import { protect, restrictTo } from "../controllers/authController.js";
 import { filterByBrands } from "../controllers/productController.js";
 import productRouter from "./productRoutes.js";
+import { validate } from "../utils/validate.js";
+import {
+  createBrandSchema,
+  updateBrandSchema,
+} from "../validators/brandValidator.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -47,6 +52,7 @@ router
     }]
   */
     uploadBrandImage,
+    validate(createBrandSchema),
     uploadBrandImageToSupabase,
     addBrand,
   );
@@ -63,6 +69,7 @@ router
     }]
   */
     uploadBrandImage,
+    validate(updateBrandSchema),
     uploadBrandImageToSupabase,
     updateBrand,
   )
