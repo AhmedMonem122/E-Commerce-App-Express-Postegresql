@@ -13,7 +13,8 @@ export const createBrandSchema = z.object({
 
   categoryId: z
     .string("Please provide a brand category!")
-    .cuid("Invalid category ID!"),
+    .cuid("Invalid category ID!")
+    .optional(),
 
   products: z.array(z.string().cuid("Invalid product ID!")).optional(),
 });
