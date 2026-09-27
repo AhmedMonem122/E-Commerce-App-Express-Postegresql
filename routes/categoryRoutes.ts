@@ -11,6 +11,11 @@ import {
 import { protect, restrictTo } from "../controllers/authController.js";
 import { filterByCategories } from "../controllers/productController.js";
 import productRouter from "./productRoutes.js";
+import {
+  createCategorySchema,
+  updateCategorySchema,
+} from "../validators/categoryValidator.js";
+import { validate } from "../utils/validate.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -100,6 +105,7 @@ router
 
   */
     uploadCategoryImage,
+    validate(createCategorySchema),
     uploadCategoryImageToSupabase,
     addCategory,
   );
@@ -168,6 +174,7 @@ router
   }
 */
     uploadCategoryImage,
+    validate(updateCategorySchema),
     uploadCategoryImageToSupabase,
     updateCategory,
   )
