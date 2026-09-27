@@ -100,20 +100,13 @@ export const getSpecificCategory = getOne(prisma.category, "category", {
 
 export const addCategory = addOne(prisma.category, "category", (data) => {
   const { brands, products, ...rest } = data;
-
   return {
     ...rest,
-
     ...(brands !== undefined && {
-      brands: {
-        connect: parseIds(brands).map((id) => ({ id })),
-      },
+      brands: { connect: brands.map((id: string) => ({ id })) },
     }),
-
     ...(products !== undefined && {
-      products: {
-        connect: parseIds(products).map((id) => ({ id })),
-      },
+      products: { connect: products.map((id: string) => ({ id })) },
     }),
   };
 });
@@ -122,7 +115,6 @@ export const updateCategory = updateOne(
   prisma.category,
   "category",
 
-  // transformData
   (data) => {
     const { brands, products, ...rest } = data;
 
@@ -131,23 +123,18 @@ export const updateCategory = updateOne(
 
       ...(brands !== undefined && {
         brands: {
-          set: parseIds(brands).map((id) => ({
-            id,
-          })),
+          set: brands.map((id: string) => ({ id })),
         },
       }),
 
       ...(products !== undefined && {
         products: {
-          set: parseIds(products).map((id) => ({
-            id,
-          })),
+          set: products.map((id: string) => ({ id })),
         },
       }),
     };
   },
 
-  // getOldImageUrls
   (oldCategory, newData) => {
     if (newData.image !== undefined) {
       return [oldCategory.image];
@@ -156,7 +143,6 @@ export const updateCategory = updateOne(
     return [];
   },
 
-  // bucket
   process.env.SUPABASE_BUCKET!,
 );
 
