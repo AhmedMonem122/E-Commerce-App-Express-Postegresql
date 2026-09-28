@@ -12,6 +12,11 @@ import {
 } from "../controllers/productController.js";
 import { protect, restrictTo } from "../controllers/authController.js";
 import reviewRouter from "./reviewRoutes.js";
+import { validate } from "../utils/validate.js";
+import {
+  createProductSchema,
+  updateProductSchema,
+} from "../validators/productValidator.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -52,6 +57,7 @@ router
     }]
     */
     uploadProductImages,
+    validate(createProductSchema),
     uploadProductImagesToSupabase,
     addProduct,
   );
@@ -68,6 +74,7 @@ router
     }]
     */
     uploadProductImages,
+    validate(updateProductSchema),
     uploadProductImagesToSupabase,
     updateProduct,
   )
