@@ -8,6 +8,11 @@ import {
   deleteReview,
 } from "../controllers/reviewController.js";
 import { protect, restrictTo } from "../controllers/authController.js";
+import { validate } from "../utils/validate.js";
+import {
+  createReviewSchema,
+  updateReviewSchema,
+} from "../validators/reviewValidator.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -35,12 +40,23 @@ router
     */
     getAllReviews,
   )
-  .post(protect, restrictTo("USER"), setProductUserIds, addReview);
+  .post(
+    protect,
+    restrictTo("USER"),
+    setProductUserIds,
+    validate(createReviewSchema),
+    addReview,
+  );
 
 router
   .route("/:id")
   .get(getReview)
-  .patch(protect, restrictTo("user", "admin"), updateReview)
-  .delete(protect, restrictTo("user", "admin"), deleteReview);
+  .patch(
+    protect,
+    restrictTo("USER", "ADMIN"),
+    validate(updateReviewSchema),
+    updateReview,
+  )
+  .delete(protect, restrictTo("USER", "ADMIN"), deleteReview);
 
 export default router;
