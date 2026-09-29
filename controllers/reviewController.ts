@@ -35,18 +35,10 @@ export const addReview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const productId = String(req.params.productId);
     const userId = String(req.user?.id);
-
-    // Check existing review
     const currentUserReview = await prisma.review.findFirst({
-      where: {
-        userId,
-        productId,
-      },
+      where: { userId, productId },
     });
-
     let review;
-
-    // User already fully reviewed
     if (
       currentUserReview &&
       currentUserReview.review &&
@@ -57,7 +49,6 @@ export const addReview = catchAsync(
         new AppError("You've already left a review for this product!", 400),
       );
     }
-
     // Update partial review
     if (
       currentUserReview &&
@@ -65,12 +56,16 @@ export const addReview = catchAsync(
       (currentUserReview.rating === null || !currentUserReview.reactions)
     ) {
       review = await prisma.review.update({
-        where: {
-          id: currentUserReview.id,
-        },
+        where: { id: currentUserReview.id },
         data: {
-          rating: req.body.rating ? Number(req.body.rating) : null,
-          reactions: req.body.reactions,
+          rating:
+            req.body.rating !== undefined
+              ? req.body.rating
+              : currentUserReview.rating,
+          reactions:
+            req.body.reactions !== undefined
+              ? req.body.reactions
+              : currentUserReview.reactions,
           updatedAt: new Date(),
         },
       });
@@ -79,23 +74,16 @@ export const addReview = catchAsync(
       review = await prisma.review.create({
         data: {
           review: req.body.review,
-          rating: req.body.rating ? Number(req.body.rating) : null,
-          reactions: req.body.reactions,
+          rating: req.body.rating !== undefined ? req.body.rating : null,
+          reactions:
+            req.body.reactions !== undefined ? req.body.reactions : null,
           productId,
           userId,
         },
       });
     }
-
-    // Recalculate ratings
     await calcAverageRatings(productId);
-
-    res.status(201).json({
-      status: "success",
-      data: {
-        review,
-      },
-    });
+    res.status(201).json({ status: "success", data: { review } });
   },
 );
 
