@@ -22,6 +22,17 @@ import {
   updateUser,
   deleteUser,
 } from "../controllers/userController.js";
+import { validate } from "../utils/validate.js";
+import {
+  createUserSchema,
+  forgotPasswordSchema,
+  loginSchema,
+  resetPasswordSchema,
+  signupSchema,
+  updateMeSchema,
+  updatePasswordSchema,
+  updateUserSchema,
+} from "../validators/userValidator.js";
 
 const router = express.Router();
 
@@ -29,13 +40,17 @@ const router = express.Router();
    PUBLIC AUTH ROUTES
 ===================================================== */
 
-router.post("/signup", register);
+router.post("/signup", validate(signupSchema), register);
 
-router.post("/signin", login);
+router.post("/signin", validate(loginSchema), login);
 
-router.post("/forgotPassword", forgotPassword);
+router.post("/forgotPassword", validate(forgotPasswordSchema), forgotPassword);
 
-router.put("/resetPassword/:token", resetPassword);
+router.put(
+  "/resetPassword/:token",
+  validate(resetPasswordSchema),
+  resetPassword,
+);
 
 /* =====================================================
    PROTECTED ROUTES
@@ -54,6 +69,7 @@ router.put(
       bearerAuth: []
     }]
   */
+  validate(updatePasswordSchema),
   updatePassword,
 );
 
@@ -77,6 +93,7 @@ router.patch(
   */
   uploadUserPhoto,
   uploadUserPhotoToSupabase,
+  validate(updateMeSchema),
   updateMe,
 );
 
@@ -112,6 +129,7 @@ router
         bearerAuth: []
       }]
     */
+    validate(createUserSchema),
     createUser,
   );
 
@@ -131,6 +149,7 @@ router
         bearerAuth: []
       }]
     */
+    validate(updateUserSchema),
     updateUser,
   )
   .delete(
