@@ -280,8 +280,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "201": {
+            "description": "Created"
           }
         },
         "requestBody": {
@@ -294,6 +294,15 @@
                     "example": "any"
                   },
                   "userId": {
+                    "example": "any"
+                  },
+                  "rating": {
+                    "example": "any"
+                  },
+                  "reactions": {
+                    "example": "any"
+                  },
+                  "review": {
                     "example": "any"
                   }
                 }
@@ -932,8 +941,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "201": {
+            "description": "Created"
           }
         },
         "requestBody": {
@@ -946,6 +955,15 @@
                     "example": "any"
                   },
                   "userId": {
+                    "example": "any"
+                  },
+                  "rating": {
+                    "example": "any"
+                  },
+                  "reactions": {
+                    "example": "any"
+                  },
+                  "review": {
                     "example": "any"
                   }
                 }
@@ -1509,8 +1527,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "201": {
+            "description": "Created"
           }
         },
         "requestBody": {
@@ -1523,6 +1541,15 @@
                     "example": "any"
                   },
                   "userId": {
+                    "example": "any"
+                  },
+                  "rating": {
+                    "example": "any"
+                  },
+                  "reactions": {
+                    "example": "any"
+                  },
+                  "review": {
                     "example": "any"
                   }
                 }
@@ -1875,8 +1902,8 @@
         ],
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "201": {
+            "description": "Created"
           }
         },
         "security": [
@@ -1894,6 +1921,15 @@
                     "example": "any"
                   },
                   "userId": {
+                    "example": "any"
+                  },
+                  "rating": {
+                    "example": "any"
+                  },
+                  "reactions": {
+                    "example": "any"
+                  },
+                  "review": {
                     "example": "any"
                   }
                 }
